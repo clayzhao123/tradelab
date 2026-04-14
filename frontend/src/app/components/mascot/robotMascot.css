@@ -1,0 +1,319 @@
+.robot-mascot-root {
+  --rm-color-body: var(--base-bg-elevated);
+  --rm-color-line: var(--base-border-strong);
+  --rm-color-eye: var(--base-text-primary);
+  --rm-color-overlay: var(--base-color-accent);
+  position: relative;
+}
+
+.robot-mascot-root[data-mood="positive"] {
+  --rm-color-overlay: var(--base-color-up);
+}
+
+.robot-mascot-root[data-mood="warning"] {
+  --rm-color-overlay: var(--base-color-warning);
+}
+
+.robot-mascot-root[data-mood="danger"] {
+  --rm-color-overlay: var(--base-color-down);
+}
+
+.robot-mascot-svg .robot-shadow {
+  transform-origin: 48px 81px;
+  animation: rm-shadow 3.2s ease-in-out infinite;
+}
+
+.robot-mascot-svg .robot-body-wrap {
+  transform-origin: 48px 52px;
+  animation: rm-float 3.2s ease-in-out infinite;
+}
+
+.robot-mascot-svg .robot-eye {
+  transform-origin: center;
+  animation: rm-blink 3.2s ease-in-out infinite;
+}
+
+.robot-mascot-svg .robot-antenna-dot {
+  animation: rm-antenna 2.4s ease-in-out infinite;
+}
+
+.robot-mascot-root[data-state="thinking-strategy"] .robot-head {
+  transform-origin: 48px 34px;
+  animation: rm-think-head 1.8s ease-in-out infinite;
+}
+
+.robot-mascot-root[data-state="idle"] .robot-body-wrap {
+  animation: rm-idle-roam 4.8s linear infinite;
+}
+
+.robot-mascot-root[data-state="idle"] .robot-eye-left,
+.robot-mascot-root[data-state="idle"] .robot-eye-right {
+  animation: rm-blink 3.2s ease-in-out infinite, rm-lookaround 4.8s ease-in-out infinite;
+}
+
+.robot-mascot-root[data-state="deploying"] .robot-body-wrap {
+  animation: rm-deploy 1.1s ease-in-out infinite;
+}
+
+.robot-mascot-root[data-state="backtesting"] .robot-eye-left,
+.robot-mascot-root[data-state="backtesting"] .robot-eye-right {
+  animation: rm-scan-eye 1.4s ease-in-out infinite;
+}
+
+.robot-mascot-root[data-state="backtest-success"] .robot-antenna-dot {
+  animation: rm-success-antenna 1s ease-in-out 2;
+}
+
+.robot-mascot-root[data-state="backtest-warning"] .robot-eye {
+  animation: rm-warning-eye 1.2s ease-in-out 2;
+}
+
+.robot-mascot-root[data-state="pnl-up"] .robot-body-wrap {
+  animation: rm-up-bounce 1.6s ease-in-out infinite;
+}
+
+.robot-mascot-root[data-state="pnl-down"] .robot-antenna-dot {
+  animation: rm-down-pulse 1.8s ease-in-out infinite;
+}
+
+.robot-mascot-root[data-state="risk-alert"] .robot-eye {
+  animation: rm-risk-eye 0.9s ease-in-out infinite;
+}
+
+.robot-mascot-root[data-state="disconnected"] .robot-body-wrap {
+  animation: rm-disconnect 2.8s ease-in-out infinite;
+}
+
+.robot-mascot-root[data-state="paused"] .robot-eye {
+  animation-duration: 4s;
+}
+
+@keyframes rm-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.6px);
+  }
+}
+
+@keyframes rm-shadow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(0.92);
+    opacity: 0.35;
+  }
+}
+
+@keyframes rm-blink {
+  0%,
+  44%,
+  52%,
+  100% {
+    transform: scaleY(1);
+  }
+  48% {
+    transform: scaleY(0.15);
+  }
+}
+
+@keyframes rm-antenna {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes rm-think-head {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes rm-idle-roam {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  20% {
+    transform: translate(0, -3px) rotate(-1deg);
+  }
+  22% {
+    transform: translate(0, -1.9px) rotate(-0.2deg);
+  }
+  40% {
+    transform: translate(3.2px, 0) rotate(1deg);
+  }
+  42% {
+    transform: translate(1.9px, 0) rotate(0.2deg);
+  }
+  60% {
+    transform: translate(0, 3px) rotate(-0.8deg);
+  }
+  62% {
+    transform: translate(0, 1.8px) rotate(-0.2deg);
+  }
+  80% {
+    transform: translate(-3.2px, 0) rotate(1deg);
+  }
+  82% {
+    transform: translate(-1.9px, 0) rotate(0.2deg);
+  }
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+}
+
+@keyframes rm-deploy {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  35% {
+    transform: translateY(-2px) rotate(-1deg);
+  }
+  70% {
+    transform: translateY(0) rotate(1deg);
+  }
+}
+
+@keyframes rm-lookaround {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  16% {
+    transform: translateX(-0.8px);
+  }
+  32% {
+    transform: translateX(0.9px);
+  }
+  48% {
+    transform: translateX(0);
+  }
+  66% {
+    transform: translateX(0.9px);
+  }
+  82% {
+    transform: translateX(-0.8px);
+  }
+}
+
+@keyframes rm-scan-eye {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(-1px);
+  }
+  70% {
+    transform: translateX(1px);
+  }
+}
+
+@keyframes rm-up-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-2.2px);
+  }
+}
+
+@keyframes rm-success-antenna {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+@keyframes rm-warning-eye {
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  40% {
+    transform: scaleY(0.5);
+    opacity: 0.75;
+  }
+}
+
+@keyframes rm-down-pulse {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(1px);
+    opacity: 1;
+  }
+}
+
+@keyframes rm-risk-eye {
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleY(0.35);
+    opacity: 0.7;
+  }
+}
+
+@keyframes rm-disconnect {
+  0%,
+  35%,
+  100% {
+    opacity: 0.75;
+  }
+  40%,
+  60% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .robot-mascot-svg .robot-shadow,
+  .robot-mascot-svg .robot-body-wrap,
+  .robot-mascot-svg .robot-eye,
+  .robot-mascot-svg .robot-antenna-dot,
+  .robot-mascot-root[data-state="idle"] .robot-body-wrap,
+  .robot-mascot-root[data-state="idle"] .robot-eye-left,
+  .robot-mascot-root[data-state="idle"] .robot-eye-right,
+  .robot-mascot-root[data-state="thinking-strategy"] .robot-head,
+  .robot-mascot-root[data-state="deploying"] .robot-body-wrap,
+  .robot-mascot-root[data-state="backtesting"] .robot-eye-left,
+  .robot-mascot-root[data-state="backtesting"] .robot-eye-right,
+  .robot-mascot-root[data-state="backtest-success"] .robot-antenna-dot,
+  .robot-mascot-root[data-state="backtest-warning"] .robot-eye,
+  .robot-mascot-root[data-state="pnl-up"] .robot-body-wrap,
+  .robot-mascot-root[data-state="pnl-down"] .robot-antenna-dot,
+  .robot-mascot-root[data-state="risk-alert"] .robot-eye,
+  .robot-mascot-root[data-state="disconnected"] .robot-body-wrap {
+    animation: none !important;
+  }
+}

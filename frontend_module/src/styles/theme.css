@@ -1,0 +1,133 @@
+@custom-variant dark (&:is(.dark *));
+
+@import "tailwindcss";
+
+:root {
+  /* 背景层级（从深到浅）*/
+  --base-bg-page:       #ECEAE3;
+  --base-bg-surface:    #F5F4F0;
+  --base-bg-elevated:   #FFFFFF;
+  --base-bg-hover:      #EDECEA;
+
+  /* 边框 */
+  --base-border-subtle:  rgba(60, 58, 52, 0.10);
+  --base-border-default: rgba(60, 58, 52, 0.18);
+  --base-border-strong:  rgba(60, 58, 52, 0.32);
+
+  /* 文字 */
+  --base-text-primary:   #1A1A18;
+  --base-text-secondary: #5E5D58;
+  --base-text-tertiary:  #999890;
+
+  /* 语义色 */
+  --base-color-up:       #1A7A52;
+  --base-color-down:     #C0392B;
+  --base-color-up-bg:    rgba(26, 122, 82, 0.08);
+  --base-color-down-bg:  rgba(192, 57, 43, 0.08);
+  --base-color-accent:   #5B4FBF;
+  --base-color-accent-bg: rgba(91, 79, 191, 0.10);
+  --base-color-warning:  #B36A00;
+  --base-color-warning-bg: rgba(179, 106, 0, 0.08);
+
+  /* 阴影 */
+  --base-shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --base-shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+
+  /* 圆角 */
+  --base-radius-sm: 6px;
+  --base-radius-md: 10px;
+  --base-radius-lg: 14px;
+}
+
+.dark {
+  --base-bg-page:       #1C1C1A;
+  --base-bg-surface:    #242422;
+  --base-bg-elevated:   #2E2E2B;
+  --base-bg-hover:      #323230;
+
+  --base-border-subtle:  rgba(255,255,255,0.06);
+  --base-border-default: rgba(255,255,255,0.10);
+  --base-border-strong:  rgba(255,255,255,0.18);
+
+  --base-text-primary:   #E8E6DF;
+  --base-text-secondary: #9C9A92;
+  --base-text-tertiary:  #5E5D58;
+
+  --base-color-up:       #34C77B;
+  --base-color-down:     #E05252;
+  --base-color-up-bg:    rgba(52, 199, 123, 0.10);
+  --base-color-down-bg:  rgba(224, 82, 82, 0.10);
+  --base-color-accent:   #8B7FE8;
+  --base-color-accent-bg: rgba(139, 127, 232, 0.12);
+  --base-color-warning:  #F0A830;
+  --base-color-warning-bg: rgba(240, 168, 48, 0.10);
+
+  --base-shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --base-shadow-md: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+@theme inline {
+  --color-page: var(--base-bg-page);
+  --color-surface: var(--base-bg-surface);
+  --color-elevated: var(--base-bg-elevated);
+  --color-hover: var(--base-bg-hover);
+  
+  --color-border-subtle: var(--base-border-subtle);
+  --color-border-default: var(--base-border-default);
+  --color-border-strong: var(--base-border-strong);
+  
+  --color-tx-primary: var(--base-text-primary);
+  --color-tx-secondary: var(--base-text-secondary);
+  --color-tx-tertiary: var(--base-text-tertiary);
+  
+  --color-up: var(--base-color-up);
+  --color-down: var(--base-color-down);
+  --color-up-bg: var(--base-color-up-bg);
+  --color-down-bg: var(--base-color-down-bg);
+  --color-accent: var(--base-color-accent);
+  --color-accent-bg: var(--base-color-accent-bg);
+  --color-warning: var(--base-color-warning);
+  --color-warning-bg: var(--base-color-warning-bg);
+
+  --shadow-sm: var(--base-shadow-sm);
+  --shadow-md: var(--base-shadow-md);
+
+  --radius-sm: var(--base-radius-sm);
+  --radius-md: var(--base-radius-md);
+  --radius-lg: var(--base-radius-lg);
+  
+  --font-sans: 'Inter', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+}
+
+@layer base {
+  * {
+    @apply border-border-default outline-accent/50;
+    box-sizing: border-box;
+  }
+  body {
+    @apply bg-page text-tx-primary font-sans antialiased m-0 p-0 h-screen overflow-hidden;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply m-0 font-medium;
+  }
+}
+
+@keyframes price-flash-up {
+  0%   { color: var(--base-color-up); opacity: 0.5; }
+  100% { color: var(--base-text-primary); opacity: 1; }
+}
+
+@keyframes price-flash-down {
+  0%   { color: var(--base-color-down); opacity: 0.5; }
+  100% { color: var(--base-text-primary); opacity: 1; }
+}
+
+.flash-up {
+  animation: price-flash-up 300ms ease-out forwards;
+}
+
+.flash-down {
+  animation: price-flash-down 300ms ease-out forwards;
+}

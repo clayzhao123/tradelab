@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"E:/workspace/tradelab/v1/backend/\" 2>/dev/null || dir \"E:\\\\workspace\\\\tradelab\\\\v1\\\\backend\" 2>/dev/null)",
+      "Bash(cp:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(true:*)",
+      "Bash(echo Port check not available:*)",
+      "Bash(taskkill:*)",
+      "Bash(netstat:*)"
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+:root {
+  color-scheme: light;
+
+  /* Surface tokens */
+  --page: #eceae3;
+  --surface: #f5f4f0;
+  --elevated: #ffffff;
+  --hover: #edecea;
+
+  /* Border tokens */
+  --border-subtle: rgba(60, 58, 52, 0.1);
+  --border: rgba(60, 58, 52, 0.18);
+  --border-strong: rgba(60, 58, 52, 0.32);
+
+  /* Text tokens */
+  --text-main: #1a1a18;
+  --text-secondary: #5e5d58;
+  --text-subtle: #999890;
+
+  /* State tokens */
+  --up: #1a7a52;
+  --up-bg: rgba(26, 122, 82, 0.08);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--text-main);
+  font-family: Inter, "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.4;
+}
+
+main,
+section,
+nav,
+header,
+article {
+  display: block;
+}

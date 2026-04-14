@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tradelab - Crypto Strategy Lab</title>
+    <link rel="stylesheet" href="./styles.css?v=20260329-fix" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <nav class="sidebar" aria-label="主导航">
+        <div class="sidebar-header">
+          <p class="brand-kicker">Crypto Strategy Lab</p>
+          <h1>tradelab</h1>
+          <p>专业策略实验台</p>
+        </div>
+
+        <!-- SVG Robot Status Component -->
+        <div id="robot-container" data-state="idle" style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 12px 8px;
+          margin-bottom: 8px;
+          border-radius: var(--radius-md);
+          background: var(--surface-soft);
+          border: 1px solid var(--border);
+          position: relative;
+        ">
+          <svg id="robot-svg" width="120" height="140" viewBox="0 0 120 140"
+               style="display:block; margin: 0 auto;">
+
+            <defs>
+              <clipPath id="eye-clip-l">
+                <circle cx="48" cy="26" r="5"/>
+              </clipPath>
+              <clipPath id="eye-clip-r">
+                <circle cx="72" cy="26" r="5"/>
+              </clipPath>
+            </defs>
+
+            <!-- === 头部 === -->
+            <rect id="robot-head" x="32" y="8" width="56" height="42" rx="10"
+              fill="var(--bg-elevated)"
+              stroke="var(--border-default)"
+              stroke-width="1.5"/>
+
+            <!-- 天线 -->
+            <line x1="60" y1="8" x2="60" y2="2"
+              stroke="var(--border-strong)" stroke-width="1.5" stroke-linecap="round"/>
+            <circle id="antenna-dot" cx="60" cy="2" r="2.5"
+              fill="var(--border-strong)"/>
+
+            <!-- 左眼 -->
+            <circle id="eye-l-bg" cx="48" cy="26" r="5" fill="var(--bg-page)"/>
+            <circle id="eye-l" cx="48" cy="26" r="3" fill="var(--text-tertiary)"/>
+            <rect id="scan-l" cx="48" cy="26"
+              x="43" y="24" width="10" height="2"
+              fill="var(--color-accent)" opacity="0"
+              clip-path="url(#eye-clip-l)"/>
+
+            <!-- 右眼 -->
+            <circle id="eye-r-bg" cx="72" cy="26" r="5" fill="var(--bg-page)"/>
+            <circle id="eye-r" cx="72" cy="26" r="3" fill="var(--text-tertiary)"/>
+            <rect id="scan-r" cx="72" cy="26"
+              x="67" y="24" width="10" height="2"
+              fill="var(--color-accent)" opacity="0"
+              clip-path="url(#eye-clip-r)"/>
+
+            <!-- 嘴部 -->
+            <path id="robot-mouth"
+              d="M 50 40 Q 60 42 70 40"
+              fill="none"
+              stroke="var(--text-tertiary)"
+              stroke-width="1.5"
+              stroke-linecap="round"/>
+
+            <!-- === 颈部 === -->
+            <rect x="57" y="50" width="6" height="10" rx="2"
+              fill="var(--border-default)"/>
+
+            <!-- === 身体 === -->
+            <rect id="robot-body" x="28" y="60" width="64" height="52" rx="8"
+              fill="var(--bg-elevated)"
+              stroke="var(--border-default)"
+              stroke-width="1.5"/>
+
+            <!-- 胸口状态指示器 -->
+            <rect id="chest-indicator" x="48" y="76" width="24" height="16" rx="4"
+              fill="var(--border-subtle)"/>
+
+            <!-- 胸口：三条细线 -->
+            <rect id="chest-bar-1" x="53" y="80" width="4" height="8" rx="1"
+              fill="var(--text-tertiary)" opacity="0.3"/>
+            <rect id="chest-bar-2" x="58" y="78" width="4" height="12" rx="1"
+              fill="var(--text-tertiary)" opacity="0.3"/>
+            <rect id="chest-bar-3" x="63" y="80" width="4" height="8" rx="1"
+              fill="var(--text-tertiary)" opacity="0.3"/>
+
+            <!-- 侧边小点 -->
+            <circle cx="28" cy="80" r="3" fill="var(--border-default)"/>
+            <circle cx="92" cy="80" r="3" fill="var(--border-default)"/>
+          </svg>
+
+          <!-- 状态文字 -->
+          <div id="robot-status-text" style="
+            text-align: center;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            letter-spacing: 0.04em;
+            margin-top: 6px;
+            font-family: var(--font-sans);
+            text-transform: uppercase;
+          ">待机中</div>
+
+          <!-- Tooltip -->
+          <div id="robot-tooltip" role="tooltip" style="
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            margin-left: 10px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            min-width: 160px;
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 150ms ease;
+            z-index: 100;
+          ">
+            <div style="font-weight:500; color:var(--text-primary); margin-bottom:6px;"
+                 id="tooltip-title">待机中</div>
+            <div id="tooltip-detail" style="line-height:1.6;">
+              等待启动指令<br>
+              后端: 未连接
+            </div>
+          </div>
+        </div>
+
+        <ul class="sidebar-nav">
+          <li class="nav-item active" data-panel="dashboard">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.4"/>
+              <rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+            <span class="nav-label">仪表盘</span>
+          </li>
+          <li class="nav-item" data-panel="strategy">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 12 L6 6 L10 9 L14 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="6" cy="6" r="1.5" fill="currentColor"/>
+              <circle cx="10" cy="9" r="1.5" fill="currentColor"/>
+              <circle cx="14" cy="3" r="1.5" fill="currentColor"/>
+            </svg>
+            <span class="nav-label">策略</span>
+          </li>
+          <li class="nav-item" data-panel="scanner">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M11 11 L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">多币扫描</span>
+          </li>
+          <li class="nav-item" data-panel="backtest">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 14 L5 8 L8 11 L11 5 L14 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 10 L4 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">回测</span>
+          </li>
+          <li class="nav-item" data-panel="positions">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="1" y="4" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M4 4 V2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M12 4 V2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="1" y1="8" x2="15" y2="8" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+            <span class="nav-label">持仓</span>
+          </li>
+          <li class="nav-item" data-panel="orders">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 3 L13 3 L11 10 L8 13 L5 14 Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+              <line x1="5" y1="6" x2="9" y2="6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <line x1="5" y1="9" x2="8" y2="9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">订单</span>
+          </li>
+          <li class="nav-item" data-panel="sessions">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M8 5 V8 L10 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="nav-label">历史</span>
+          </li>
+          <li class="nav-item" data-panel="settings">
+            <svg class="nav-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M8 1 V3M8 13 V15M1 8 H3M13 8 H15M3 3 L4.5 4.5M11.5 11.5 L13 13M3 13 L4.5 11.5M11.5 4.5 L13 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-label">设置</span>
+          </li>
+        </ul>
+
+        <div class="sidebar-footer">
+          <div class="status-dot" id="backendStatus">
+            <span class="dot offline"></span>
+            <span>后端未连接</span>
+          </div>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <header class="main-header">
+          <div class="header-left">
+            <p class="header-kicker">Crypto 策略实验台</p>
+            <h2 id="panelTitle">仪表盘</h2>
+          </div>
+          <div class="header-right">
+            <button id="resetDataBtn" class="btn-ghost danger">重置数据</button>
+            <button id="toggleBot" class="btn-primary" id="main-action-btn">启动机器人</button>
+          </div>
+        </header>
+
+        <div class="content-area">
+          <div class="content-wrapper">
+            <!-- Dashboard Panel -->
+            <div id="panel-dashboard" class="panel active">
+              <div class="status-banner" aria-label="系统状态概览">
+                <!-- Zone 1: Robot status — most important, gets most space -->
+                <div class="status-zone status-primary">
+                  <div class="status-indicator">
+                    <span class="status-dot" id="bannerStatusDot" data-state="idle"></span>
+                    <span class="status-label" id="bannerStatusLabel">待机中</span>
+                  </div>
+                  <p class="status-detail-label" id="bannerStatusSub">等待启动指令</p>
+                </div>
+
+                <div class="status-divider"></div>
+
+                <!-- Zone 2: Market status -->
+                <div class="status-zone">
+                  <span class="zone-label">行情</span>
+                  <span class="zone-value pending" id="bannerFeedValue">待更新</span>
+                </div>
+
+                <div class="status-divider"></div>
+
+                <!-- Zone 3: Risk status -->
+                <div class="status-zone">
+                  <span class="zone-label">风控</span>
+                  <span class="zone-value ok" id="bannerRiskValue">正常</span>
+                </div>
+
+                <div class="status-divider"></div>
+
+                <!-- Zone 4: Running rhythm -->
+                <div class="status-zone">
+                  <span class="zone-label">最近 Tick</span>
+                  <span class="zone-value mono" id="bannerTickValue">--</span>
+                </div>
+              </div>
+
+              <div class="dashboard-grid">
+                <section class="card account-card" aria-label="账户总览">
+                  <!-- Total equity: largest, top -->
+                  <div class="asset-total">
+                    <span class="asset-label">总资产</span>
+                    <span class="asset-value" id="equity">$0.00</span>
+                  </div>
+
+                  <div class="asset-divider"></div>
+
+                  <!-- Secondary data: 2-column grid -->
+                  <div class="asset-grid">
+                    <div class="asset-item">
+                      <span class="asset-item-label">现金</span>
+                      <span class="asset-item-value mono" id="cash">$0.00</span>
+                    </div>
+                    <div class="asset-item">
+                      <span class="asset-item-label">持仓市值</span>
+                      <span class="asset-item-value mono" id="marketValue">$0.00</span>
+                    </div>
+                    <div class="asset-item">
+                      <span class="asset-item-label">累计收益</span>
+                      <span class="asset-item-value mono neutral" id="pnl">$0.00</span>
+                    </div>
+                    <div class="asset-item">
+                      <span class="asset-item-label">已实现盈亏</span>
+                      <span class="asset-item-value mono neutral" id="realizedPnl">$0.00</span>
+                    </div>
+                  </div>
+
+                  <div class="asset-divider"></div>
+
+                  <!-- Unrealized PnL: full width, special -->
+                  <div class="asset-item-wide">
+                    <span class="asset-item-label">未实现盈亏</span>
+                    <span class="asset-item-value mono neutral" id="unrealizedPnl">$0.00</span>
+                  </div>
+
+                  <div class="flow-row">
+                    <label for="flowAmount" class="sr-only">资金金额</label>
+                    <input id="flowAmount" type="number" placeholder="输入金额" />
+                    <button id="depositBtn" class="btn-ghost">入金</button>
+                    <button id="withdrawBtn" class="btn-ghost">出金</button>
+                  </div>
+                </section>
+
+                <section class="card chart-card" aria-label="净值走势">
+                  <div class="card-head">
+                    <h2>净值走势与风险</h2>
+                    <div class="mini-stats">
+                      <div class="mini-stat"><span>交易总数</span><strong id="liveTradeCount">0</strong></div>
+                      <div class="mini-stat"><span>已平仓胜率</span><strong id="liveWinRate">0%</strong></div>
+                      <div class="mini-stat"><span>当前回撤</span><strong id="liveDrawdown">0%</strong></div>
+                    </div>
+                  </div>
+                  <canvas id="equityChart" width="980" height="280"></canvas>
+                  <p id="chartEventSummary" class="muted chart-note">图表说明：蓝线=净值，红色区域=回撤，标记=交易/资金事件</p>
+                </section>
+              </div>
+            </div>
+
+            <!-- Strategy Panel -->
+            <div id="panel-strategy" class="panel">
+              <section class="card" aria-label="核心策略参数">
+                <h2>核心策略参数</h2>
+                <p class="section-desc">用于信号判断、扫描评分和回测计算</p>
+                <div class="settings-row strategy-core-row">
+                  <div class="settings-field">
+                    <label for="maShort">MA短周期</label>
+                    <input id="maShort" type="number" value="8" />
+                  </div>
+                  <div class="settings-field">
+                    <label for="maLong">MA长周期</label>
+                    <input id="maLong" type="number" value="21" />
+                  </div>
+                  <div class="settings-field">
+                    <label for="rsiBuy">RSI买阈值</label>
+                    <input id="rsiBuy" type="number" value="35" />
+                  </div>
+                  <div class="settings-field">
+                    <label for="rsiSell">RSI卖阈值</label>
+                    <input id="rsiSell" type="number" value="65" />
+                  </div>
+                </div>
+              </section>
+
+              <section class="card control-card" aria-label="策略构建">
+                <h2>策略构建器</h2>
+                <p class="section-desc">从扭蛋机选择指标，融合生成新策略</p>
+
+                <!-- Gashapon Style Indicator Selection -->
+                <div class="gashapon-container">
+                  <!-- Left: Indicator Gashapon Pool -->
+                  <div class="gashapon-pool">
+                    <div class="gashapon-label">指标扭蛋机</div>
+                    <div class="gashapon-balls" id="gashaponBalls">
+                      <!-- Populated by JS with indicator balls -->
+                    </div>
+                  </div>
+
+                  <!-- Middle: Selection Box -->
+                  <div class="selection-box">
+                    <div class="selection-box-label">已选指标 <span id="selectedCount">0</span></div>
+                    <div class="selection-box-inner" id="selectionBox">
+                      <!-- Selected indicator balls appear here -->
+                      <div class="selection-placeholder">点击左侧指标球添加到此处</div>
+                    </div>
+                    <div class="selection-actions">
+                      <button id="clearSelectionBtn" class="btn-ghost btn-sm">清空</button>
+                    </div>
+                  </div>
+
+                  <!-- Right: Fusion Button + Result Basket -->
+                  <div class="fusion-zone">
+                    <div class="fusion-type-select">
+                      <label class="fusion-type-label">融合方式</label>
+                      <select id="fusionTypeSelect" class="fusion-select">
+                        <option value="cross">交叉融合</option>
+                        <option value="weighted">加权融合</option>
+                        <option value="nested">嵌套融合</option>
+                        <option value="interpolate">插值融合</option>
+                      </select>
+                    </div>
+                    <button id="fuseIndicatorsBtn" class="btn-primary fuse-btn" disabled>
+                      <span class="fuse-btn-icon">⚗</span>
+                      融合指标
+                    </button>
+
+                    <!-- Result Basket -->
+                    <div class="fusion-basket">
+                      <div class="basket-label">融合结果</div>
+                      <div id="fusionResults" class="fusion-results">
+                        <!-- Fused strategies appear here -->
+                        <div class="basket-placeholder">融合后的策略将显示在此</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- MiniMax AI Fusion Section -->
+                  <div class="minimax-section">
+                    <div class="minimax-header">
+                      <span class="minimax-icon">🤖</span>
+                      <span>MiniMax AI 融合</span>
+                    </div>
+                    <div class="minimax-api-row">
+                      <input id="minimaxApiKey" type="password" placeholder="输入 MiniMax API Key" style="flex:1" />
+                      <button id="validateMiniMaxBtn" class="btn-secondary btn-sm">验证</button>
+                    </div>
+                    <div class="minimax-status" id="minimaxStatus"></div>
+                    <div class="minimax-fusion-row">
+                      <button id="aiFuseIndicatorsBtn" class="btn-primary" disabled>
+                        <span>🧠</span> AI融合选中指标
+                      </button>
+                    </div>
+                    <div class="minimax-hint">选择2-5个指标后，使用AI融合生成复合指标</div>
+                  </div>
+                </div>
+
+                <!-- Legacy Strategy Builder (kept for reference) -->
+                <div class="legacy-strategy-builder" style="display:none;">
+                  <div class="group-title">当前策略指标</div>
+                  <div id="strategyBuilder" class="strategy-builder">
+                    <div class="strategy-indicators">
+                      <!-- Populated by JS -->
+                    </div>
+                    <div class="strategy-add">
+                      <select id="addIndicatorSelect">
+                        <option value="">+ 添加指标</option>
+                        <option value="SMA">SMA - 简单移动平均</option>
+                        <option value="EMA">EMA - 指数移动平均</option>
+                        <option value="RSI">RSI - 相对强弱指标</option>
+                        <option value="MACD">MACD - 平滑异同移动平均线</option>
+                        <option value="BB">BB - 布林带</option>
+                        <option value="ATR">ATR - 平均真实波幅</option>
+                        <option value="STOCH">STOCH - 随机指标</option>
+                        <option value="ADX">ADX - 平均方向指数</option>
+                        <option value="CCI">CCI - 顺势指标</option>
+                        <option value="WR">WR - 威廉指标</option>
+                        <option value="KDJ">KDJ - 随机指标</option>
+                        <option value="OBV">OBV - 能量潮</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="card" aria-label="风控参数">
+                <h2>风控参数</h2>
+                <div class="risk-params">
+                  <div class="risk-param">
+                    <label for="maxDrawdownPct">最大回撤(%)</label>
+                    <div class="input-help">
+                      <input id="maxDrawdownPct" type="number" value="18" />
+                      <span class="help-tip" data-tip="当账户净值从峰值下跌超过此比例，机器人将自动停止。例：18%表示从10万跌到8.2万以下时停止。">?</span>
+                    </div>
+                  </div>
+                  <div class="risk-param">
+                    <label for="maxDailyLossPct">单日亏损(%)</label>
+                    <div class="input-help">
+                      <input id="maxDailyLossPct" type="number" value="7" />
+                      <span class="help-tip" data-tip="单日累计亏损超过此比例时，机器人自动停止，防止日内进一步损失。">?</span>
+                    </div>
+                  </div>
+                  <div class="risk-param">
+                    <label for="maxSymbolExposurePct">单标的敞口上限(%)</label>
+                    <div class="input-help">
+                      <input id="maxSymbolExposurePct" type="number" value="35" />
+                      <span class="help-tip" data-tip="单个币种的最大仓位占比，防止过度集中单一风险。">?</span>
+                    </div>
+                  </div>
+                  <div class="risk-param">
+                    <label for="maxGrossExposurePct">总仓位上限(%)</label>
+                    <div class="input-help">
+                      <input id="maxGrossExposurePct" type="number" value="85" />
+                      <span class="help-tip" data-tip="所有持仓的总市值占账户净值的最大比例。">?</span>
+                    </div>
+                  </div>
+                  <div class="risk-param">
+                    <label for="cooldownSec">冷却时间(秒)</label>
+                    <div class="input-help">
+                      <input id="cooldownSec" type="number" value="30" />
+                      <span class="help-tip" data-tip="开仓后需要等待的最小时间，防止频繁交易。">?</span>
+                    </div>
+                  </div>
+                  <div class="risk-param">
+                    <label for="maxConsecutiveLosses">连续亏损保护(次)</label>
+                    <div class="input-help">
+                      <input id="maxConsecutiveLosses" type="number" value="3" />
+                      <span class="help-tip" data-tip="连续亏损达到此次数后停止，等待市场企稳。">?</span>
+                    </div>
+                  </div>
+                  <div class="risk-param">
+                    <label for="riskPct">单笔仓位(%)</label>
+                    <div class="input-help">
+                      <input id="riskPct" type="number" value="10" />
+                      <span class="help-tip" data-tip="每笔交易使用的资金比例，控制单次风险敞口。">?</span>
+                    </div>
+                  </div>
+                  <div class="risk-param">
+                    <label for="tickSec">刷新(秒)</label>
+                    <div class="input-help">
+                      <input id="tickSec" type="number" value="5" />
+                      <span class="help-tip" data-tip="机器人状态刷新间隔，建议5-60秒。">?</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <!-- Scanner Panel -->
+            <div id="panel-scanner" class="panel">
+              <section class="card scanner-card" aria-label="多币扫描器">
+                <div class="card-head">
+                  <h2>多币扫描器</h2>
+                  <div class="mini-stats">
+                    <div class="mini-stat"><span>模式</span><strong>Crypto 策略扫描</strong></div>
+                    <div class="mini-stat"><span>用途</span><strong>找机会，不自动交易</strong></div>
+                  </div>
+                </div>
+
+                <div class="scanner-section">
+                  <div class="group-title">扫描策略</div>
+                  <div class="scanner-controls">
+                    <label for="scanStrategySelect">选择策略</label>
+                    <select id="scanStrategySelect">
+                      <option value="preset-main">加载中...</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="scanner-section">
+                  <div class="group-title">过滤规则</div>
+                  <div class="scanner-filters">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="filterExcludeStable" checked />
+                      <span>排除稳定币 (USDC/USDT/DAI)</span>
+                    </label>
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="filterWatchlistMode" />
+                      <span>Watchlist 模式</span>
+                    </label>
+                    <div class="filter-row">
+                      <label for="filterMinMarketCap">最低市值 ($)</label>
+                      <input id="filterMinMarketCap" type="number" value="0" min="0" />
+                    </div>
+                  </div>
+                </div>
+
+                <div id="watchlistFilterContainer" class="scanner-section" style="display: none;">
+                  <div class="group-title">Watchlist 币种</div>
+                  <div class="scanner-controls">
+                    <textarea id="scannerWatchlist" rows="2" placeholder="BTCUSDT, ETHUSDT, SOLUSDT"></textarea>
+                  </div>
+                </div>
+
+                <div class="scanner-section">
+                  <div class="group-title">扫描设置</div>
+                  <div class="scanner-grid-inputs">
+                    <div class="scanner-control">
+                      <label for="scannerTimeframes">扫描周期（多周期）</label>
+                      <input id="scannerTimeframes" type="text" value="5m, 15m, 1H" placeholder="1m, 5m, 15m, 1H" />
+                    </div>
+                    <div class="scanner-control">
+                      <label for="scannerCandidateCount">候选数量</label>
+                      <input id="scannerCandidateCount" type="number" value="10" min="3" max="24" />
+                    </div>
+                    <div class="scanner-control">
+                      <label for="scannerMinScore">最低分数</label>
+                      <input id="scannerMinScore" type="number" value="55" min="0" max="100" />
+                    </div>
+                    <div class="scanner-control">
+                      <label for="scannerIntervalMin">扫描频率(分钟)</label>
+                      <input id="scannerIntervalMin" type="number" value="60" min="5" max="720" />
+                    </div>
+                    <div class="scanner-control">
+                      <label for="scannerAutoRefresh">自动刷新</label>
+                      <select id="scannerAutoRefresh">
+                        <option value="true">开启</option>
+                        <option value="false">关闭</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="action-row">
+                  <button id="runScanner" class="btn-primary">运行扫描</button>
+                  <button id="exportScannerJson" class="btn-ghost">导出JSON</button>
+                </div>
+                <p id="scannerSummary" class="status-detail muted">扫描范围：--</p>
+
+                <!-- Sentiment Banner -->
+                <div id="scannerSentiment" class="scanner-sentiment" style="display:none">
+                  <span class="scanner-sentiment-label">市场情绪</span>
+                  <div class="scanner-sentiment-bar">
+                    <div class="scanner-sentiment-track">
+                      <div id="scannerBullBar" class="scanner-sentiment-bull" style="width:50%"></div>
+                      <div id="scannerBearBar" class="scanner-sentiment-bear" style="width:50%"></div>
+                    </div>
+                    <span id="scannerSentimentText" class="scanner-sentiment-text neutral">--</span>
+                  </div>
+                  <span id="scannerSentimentMeta" class="scanner-sentiment-meta"></span>
+                </div>
+
+                <!-- Card Grid -->
+                <div id="scannerCards" class="scanner-cards"></div>
+
+                <!-- Empty State -->
+                <div id="scannerEmpty" class="scanner-empty" style="display:none">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M24 14v10l6 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                  <p class="scanner-empty-title">暂无候选</p>
+                  <p class="scanner-empty-desc">运行扫描或放宽最低分阈值</p>
+                </div>
+
+                <!-- Candidate Detail -->
+                <pre id="scannerDetail" class="status-detail" style="margin-top:14px;font-size:12px;white-space:pre-wrap;display:none">尚无候选详情</pre>
+
+                <details class="scanner-payload">
+                  <summary>标准化输出预览</summary>
+                  <pre id="scannerPayload">尚未生成标准化输出</pre>
+                </details>
+              </section>
+            </div>
+
+            <!-- Backtest Panel -->
+            <div id="panel-backtest" class="panel">
+              <section class="card backtest-card" aria-label="回测系统">
+                  <div class="card-head">
+                    <h2>策略回测</h2>
+                    <div class="mini-stats">
+                      <div class="mini-stat"><span>模式</span><strong>历史数据回测</strong></div>
+                      <div class="mini-stat"><span>用途</span><strong>验证策略稳定性</strong></div>
+                    </div>
+                  </div>
+
+                  <div class="backtest-section">
+                    <div class="group-title">回测强度</div>
+                    <div class="backtest-controls">
+                      <label for="backtestIntensity">强度选择</label>
+                      <select id="backtestIntensity">
+                        <option value="light">Light (快速验证)</option>
+                        <option value="medium" selected>Medium (常规回测)</option>
+                        <option value="heavy">Heavy (全面验证)</option>
+                        <option value="custom">Custom (自定义)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="backtest-section">
+                    <div class="group-title">币种选择</div>
+                    <div class="backtest-controls">
+                      <textarea id="backtestSymbols" rows="2" placeholder="BTCUSDT, ETHUSDT, SOLUSDT">BTCUSDT, ETHUSDT</textarea>
+                    </div>
+                    <div class="backtest-quick-btns">
+                      <button class="btn-small" onclick="document.getElementById('backtestSymbols').value='BTCUSDT, ETHUSDT'">BTC+ETH</button>
+                      <button class="btn-small" onclick="document.getElementById('backtestSymbols').value='BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT'">Top4</button>
+                      <button class="btn-small" onclick="document.getElementById('backtestSymbols').value='BTCUSDT, ETHUSDT, SOLUSDT, BNBUSDT, XRPUSDT, ADAUSDT'">Top6</button>
+                    </div>
+                  </div>
+
+                  <div class="backtest-section">
+                    <div class="group-title">当前策略预览</div>
+                    <div class="backtest-strategy-preview" id="backtestStrategyPreview">
+                      <span class="strategy-tag">SMA(8)</span>
+                      <span class="strategy-tag">SMA(21)</span>
+                      <span class="strategy-tag">RSI(14)</span>
+                      <span class="strategy-tag muted">融合: OR</span>
+                    </div>
+                  </div>
+
+                  <div class="backtest-section">
+                    <div class="group-title">回测参数</div>
+                    <div class="backtest-grid-inputs">
+                      <div class="backtest-control">
+                        <label for="backtestTimeframe">时间粒度</label>
+                        <select id="backtestTimeframe">
+                          <option value="1m">1分钟</option>
+                          <option value="5m">5分钟</option>
+                          <option value="15m">15分钟</option>
+                          <option value="1H" selected>1小时</option>
+                          <option value="4H">4小时</option>
+                          <option value="1d">1天</option>
+                        </select>
+                      </div>
+                      <div class="backtest-control">
+                        <label for="backtestInitialCash">初始资金</label>
+                        <input id="backtestInitialCash" type="number" value="10000" min="100" />
+                      </div>
+                      <div class="backtest-control">
+                        <label for="backtestFee">手续费(bps)</label>
+                        <input id="backtestFee" type="number" value="8" min="0" max="100" />
+                      </div>
+                      <div class="backtest-control">
+                        <label for="backtestSlippage">滑点(bps)</label>
+                        <input id="backtestSlippage" type="number" value="5" min="0" max="100" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="action-row">
+                    <button id="runBacktest" class="btn-primary">运行回测</button>
+                    <button id="stopBacktest" class="btn-danger" disabled>停止</button>
+                    <button id="exportBacktestJson" class="btn-secondary">导出JSON</button>
+                  </div>
+                  <p id="backtestSummary" class="status-detail muted">回测范围：--</p>
+
+                  <div class="backtest-tabs">
+                    <button class="backtest-tab active" data-tab="leaderboard" onclick="switchBacktestTab('leaderboard')">排行榜</button>
+                    <button class="backtest-tab" data-tab="detail" onclick="switchBacktestTab('detail')">详情</button>
+                    <button class="backtest-tab" data-tab="equity" onclick="switchBacktestTab('equity')">净值曲线</button>
+                  </div>
+
+                  <div id="backtestLeaderboard" class="backtest-results-grid">
+                    <div class="table-wrap">
+                      <table id="backtestTable">
+                        <thead>
+                          <tr>
+                            <th>排名</th>
+                            <th>标的</th>
+                            <th>收益率</th>
+                            <th>交易次数</th>
+                            <th>胜率</th>
+                            <th>最大回撤</th>
+                            <th>夏普比率</th>
+                            <th>操作</th>
+                          </tr>
+                        </thead>
+                        <tbody id="backtestTableBody">
+                          <tr><td colspan="8" class="muted">暂无回测结果</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div id="backtestDetail" class="backtest-detail-panel" style="display:none;">
+                    <!-- 详情内容由 JS 渲染 -->
+                  </div>
+
+                  <div id="backtestEquity" class="backtest-equity-panel" style="display:none;">
+                    <div class="equity-chart-controls">
+                      <label for="equitySymbolSelect">选择标的</label>
+                      <select id="equitySymbolSelect"></select>
+                      <div class="equity-legend">
+                        <span class="legend-item"><span class="legend-line equity-line"></span>净值</span>
+                        <span class="legend-item"><span class="legend-line drawdown-line"></span>回撤</span>
+                      </div>
+                    </div>
+                    <canvas id="backtestEquityChart" width="900" height="300"></canvas>
+                    <div id="equityChartStats" class="equity-stats"></div>
+                  </div>
+                </section>
+            </div>
+
+            <!-- Replay Panel -->
+            <div id="panel-replay" class="panel">
+              <section class="card replay-card" aria-label="交易复盘图">
+                <div class="card-head">
+                  <h2>Crypto 交易复盘图</h2>
+                  <div class="mini-stats">
+                    <div class="mini-stat"><span>图表</span><strong>K线 + MA + RSI</strong></div>
+                    <div class="mini-stat"><span>定位</span><strong>解释为何进出场</strong></div>
+                  </div>
+                </div>
+                <div class="replay-controls">
+                  <div class="replay-control">
+                    <label for="replaySymbol">复盘标的</label>
+                    <select id="replaySymbol"></select>
+                  </div>
+                  <div class="replay-control">
+                    <label for="replayTimeframe">K线周期</label>
+                    <select id="replayTimeframe"></select>
+                  </div>
+                  <div class="replay-control">
+                    <label for="replayRsiToggle">RSI 子图</label>
+                    <select id="replayRsiToggle">
+                      <option value="true">显示</option>
+                      <option value="false">隐藏</option>
+                    </select>
+                  </div>
+                </div>
+                <p id="replaySummary" class="status-detail muted">复盘图：--</p>
+                <div class="replay-results-grid">
+                  <div class="replay-chart-wrap">
+                    <canvas id="replayChart" width="980" height="420"></canvas>
+                    <pre id="replayTooltip" class="replay-tooltip">--</pre>
+                  </div>
+                  <pre id="replayDetail">暂无交易复盘详情</pre>
+                </div>
+                <p class="muted chart-note">标记说明：绿色三角=开仓，红色倒三角=平仓/止损/止盈，蓝点=订单创建/成交，灰叉=撤单，红线=风控事件。点击图表可锁定当前K线事件。</p>
+              </section>
+            </div>
+
+            <!-- Positions Panel -->
+            <div id="panel-positions" class="panel">
+              <section class="card data-card" aria-label="交易数据">
+                <div class="card-head">
+                  <h2>交易数据</h2>
+                  <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="positionsPanel">持仓</button>
+                    <button class="tab-btn" data-tab="tradesPanel">交易记录</button>
+                    <button class="tab-btn" data-tab="ordersPanel">订单</button>
+                    <button class="tab-btn" data-tab="flowsPanel">资金流水</button>
+                  </div>
+                </div>
+
+                <div id="positionsPanel" class="tab-panel active">
+                  <div class="table-wrap">
+                    <table id="positionsTable">
+                      <thead>
+                        <tr>
+                          <th class="sortable" data-table="positions" data-key="sym" data-label="标的">标的</th>
+                          <th class="sortable" data-table="positions" data-key="qty" data-label="数量">数量</th>
+                          <th class="sortable" data-table="positions" data-key="avg" data-label="均价">均价</th>
+                          <th class="sortable" data-table="positions" data-key="cp" data-label="现价">现价</th>
+                          <th class="sortable" data-table="positions" data-key="upnl" data-label="浮盈">浮盈</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                  <div id="positionsEmpty" class="empty-state" style="display:none;">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <rect x="8" y="14" width="32" height="22" rx="4" stroke="var(--border-default)" stroke-width="1.5"/>
+                      <line x1="14" y1="22" x2="34" y2="22" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                      <line x1="14" y1="28" x2="26" y2="28" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <p class="empty-title">暂无持仓</p>
+                    <p class="empty-desc">启动机器人后，策略开仓将显示在这里</p>
+                  </div>
+                </div>
+
+                <div id="tradesPanel" class="tab-panel">
+                  <div class="table-wrap">
+                    <table id="tradesTable">
+                      <thead>
+                        <tr>
+                          <th class="sortable" data-table="trades" data-key="ts" data-label="时间">时间</th>
+                          <th class="sortable" data-table="trades" data-key="sym" data-label="标的">标的</th>
+                          <th class="sortable" data-table="trades" data-key="side" data-label="方向">方向</th>
+                          <th class="sortable" data-table="trades" data-key="price" data-label="价格">价格</th>
+                          <th class="sortable" data-table="trades" data-key="qty" data-label="数量">数量</th>
+                          <th class="sortable" data-table="trades" data-key="amount" data-label="金额">金额</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                  <div id="tradesEmpty" class="empty-state" style="display:none;">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <rect x="8" y="14" width="32" height="22" rx="4" stroke="var(--border-default)" stroke-width="1.5"/>
+                      <line x1="14" y1="22" x2="34" y2="22" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                      <line x1="14" y1="28" x2="26" y2="28" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <p class="empty-title">暂无交易记录</p>
+                    <p class="empty-desc">策略成交后将显示在这里</p>
+                  </div>
+                </div>
+
+                <div id="ordersPanel" class="tab-panel">
+                  <div class="table-wrap">
+                    <table id="ordersTable">
+                      <thead>
+                        <tr>
+                          <th class="sortable" data-table="orders" data-key="ts" data-label="时间">时间</th>
+                          <th class="sortable" data-table="orders" data-key="symbol" data-label="标的">标的</th>
+                          <th class="sortable" data-table="orders" data-key="side" data-label="方向">方向</th>
+                          <th class="sortable" data-table="orders" data-key="type" data-label="类型">类型</th>
+                          <th class="sortable" data-table="orders" data-key="qty" data-label="数量">数量</th>
+                          <th class="sortable" data-table="orders" data-key="status" data-label="状态">状态</th>
+                          <th data-label="操作">操作</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                  <div id="ordersEmpty" class="empty-state" style="display:none;">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <rect x="8" y="14" width="32" height="22" rx="4" stroke="var(--border-default)" stroke-width="1.5"/>
+                      <line x1="14" y1="22" x2="34" y2="22" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                      <line x1="14" y1="28" x2="26" y2="28" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <p class="empty-title">暂无订单</p>
+                    <p class="empty-desc">订单将显示在这里</p>
+                  </div>
+                </div>
+
+                <div id="flowsPanel" class="tab-panel">
+                  <div class="table-wrap">
+                    <table id="flowsTable">
+                      <thead>
+                        <tr>
+                          <th class="sortable" data-table="flows" data-key="ts" data-label="时间">时间</th>
+                          <th class="sortable" data-table="flows" data-key="type" data-label="类型">类型</th>
+                          <th class="sortable" data-table="flows" data-key="amt" data-label="金额">金额</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                  <div id="flowsEmpty" class="empty-state" style="display:none;">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                      <rect x="8" y="14" width="32" height="22" rx="4" stroke="var(--border-default)" stroke-width="1.5"/>
+                      <line x1="14" y1="22" x2="34" y2="22" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                      <line x1="14" y1="28" x2="26" y2="28" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <p class="empty-title">暂无资金流水</p>
+                    <p class="empty-desc">入金、出金将显示在这里</p>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <!-- Orders Panel -->
+            <div id="panel-orders" class="panel">
+              <section class="card data-card" aria-label="订单管理">
+                <div class="card-head">
+                  <h2>订单管理</h2>
+                </div>
+                <div class="table-wrap">
+                  <table id="ordersTableOuter">
+                    <thead>
+                      <tr>
+                        <th class="sortable" data-table="orders" data-key="ts" data-label="时间">时间</th>
+                        <th class="sortable" data-table="orders" data-key="symbol" data-label="标的">标的</th>
+                        <th class="sortable" data-table="orders" data-key="side" data-label="方向">方向</th>
+                        <th class="sortable" data-table="orders" data-key="type" data-label="类型">类型</th>
+                        <th class="sortable" data-table="orders" data-key="qty" data-label="数量">数量</th>
+                        <th class="sortable" data-table="orders" data-key="status" data-label="状态">状态</th>
+                        <th data-label="操作">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <div id="ordersOuterEmpty" class="empty-state" style="display:none;">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect x="8" y="14" width="32" height="22" rx="4" stroke="var(--border-default)" stroke-width="1.5"/>
+                    <line x1="14" y1="22" x2="34" y2="22" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="14" y1="28" x2="26" y2="28" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                  <p class="empty-title">暂无订单</p>
+                  <p class="empty-desc">订单将显示在这里</p>
+                </div>
+              </section>
+            </div>
+
+            <!-- Sessions Panel -->
+            <div id="panel-sessions" class="panel">
+              <section class="card data-card" aria-label="机器人运行历史">
+                <div class="card-head">
+                  <h2>机器人运行历史</h2>
+                  <button id="refreshSessions" class="btn-secondary">刷新</button>
+                </div>
+                <div class="table-wrap">
+                  <table id="sessionsTable">
+                    <thead>
+                      <tr>
+                        <th>开始时间</th>
+                        <th>运行时长</th>
+                        <th>初始本金</th>
+                        <th>期末资产</th>
+                        <th>收益/收益率</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+                <div id="sessionsEmpty" class="empty-state" style="display:none;">
+                  <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect x="8" y="14" width="32" height="22" rx="4" stroke="var(--border-default)" stroke-width="1.5"/>
+                    <line x1="14" y1="22" x2="34" y2="22" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                    <line x1="14" y1="28" x2="26" y2="28" stroke="var(--border-default)" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                  <p class="empty-title">暂无运行历史</p>
+                  <p class="empty-desc">机器人运行后将显示历史记录</p>
+                </div>
+              </section>
+            </div>
+
+            <!-- Settings Panel -->
+            <div id="panel-settings" class="panel">
+              <section class="card" aria-label="系统设置">
+                <h2>系统设置</h2>
+
+                <div class="group-title">成本参数</div>
+                <div class="settings-row">
+                  <div class="settings-field">
+                    <label for="feeBps">手续费(bps)</label>
+                    <input id="feeBps" type="number" value="8" />
+                  </div>
+                  <div class="settings-field">
+                    <label for="slippageBps">滑点(bps)</label>
+                    <input id="slippageBps" type="number" value="5" />
+                  </div>
+                </div>
+
+                <div class="group-title">市场信息</div>
+                <div class="settings-row">
+                  <div class="settings-field">
+                    <label for="marketRange">市场范围</label>
+                    <input id="marketRange" type="text" value="Crypto 主流币" disabled />
+                  </div>
+                  <div class="settings-field">
+                    <label for="marketSource">行情源</label>
+                    <input id="marketSource" type="text" value="OKX / Binance / 模拟" disabled />
+                  </div>
+                </div>
+
+                <div class="action-row">
+                  <button id="exportJson">导出JSON</button>
+                  <button id="exportCsv">导出CSV</button>
+                  <button id="resetStorage" class="btn-danger">重置本地数据</button>
+                </div>
+              </section>
+
+              <section class="card" aria-label="系统日志">
+                <h2>系统日志</h2>
+                <pre id="systemLog">暂无日志</pre>
+              </section>
+
+              <section class="card" aria-label="回测结果">
+                <h2>Crypto 回测结果</h2>
+                <pre id="backtestOutput">尚未运行</pre>
+                <button id="runBacktestSettings" class="btn-primary">运行回测</button>
+              </section>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,341 @@
+# tradelab 前端重设计 Prompt
+
+> 将本文件完整内容粘贴给 Cursor / Claude 使用。
+
+---
+
+## 项目背景
+
+你正在重设计一个名为 **tradelab** 的 Web 端 Crypto 模拟交易台（Paper Trading）。  
+技术栈：**Vanilla JS + HTML5 Canvas**，单页应用（SPA），连接 Node.js 后端（REST + WebSocket）。  
+目标：在不改动后端逻辑和数据结构的前提下，将前端 `app.js` + `index.html` + `styles.css` 重构为一个具备高可读性、高易用性的专业 Trading Dashboard。
+
+---
+
+## 设计哲学：Claude.ai 风格
+
+参照 Claude.ai 的设计语言，核心原则如下：
+
+### 1. 整体基调
+- **克制的精致感**：不张扬，不花哨，细节处理精到
+- **信息优先**：每一个元素都应服务于数据可读性，装饰元素极度克制
+- **温暖中性**：不用冷灰，用带有微微暖色调的中性色（如 `#F5F4F0`、`#2C2C2A`）
+- **全局双模式**：Light / Dark 双模式，CSS 变量驱动，一套变量完整覆盖两种模式
+
+### 2. 色彩系统（CSS 变量）
+
+在 `:root` 和 `[data-theme="dark"]` 中定义以下变量：
+
+```css
+/* Light Mode */
+:root {
+  /* 背景层级（从深到浅）*/
+  --bg-page:       #ECEAE3;   /* 页面底色：温暖米灰 */
+  --bg-surface:    #F5F4F0;   /* 卡片/面板背景 */
+  --bg-elevated:   #FFFFFF;   /* 输入框、弹窗等最高层 */
+  --bg-hover:      #EDECEA;   /* hover 态背景 */
+
+  /* 边框 */
+  --border-subtle:  rgba(60, 58, 52, 0.10);  /* 极细分割线 */
+  --border-default: rgba(60, 58, 52, 0.18);  /* 默认边框 */
+  --border-strong:  rgba(60, 58, 52, 0.32);  /* 强调边框 */
+
+  /* 文字 */
+  --text-primary:   #1A1A18;   /* 主文字 */
+  --text-secondary: #5E5D58;   /* 次要文字 */
+  --text-tertiary:  #999890;   /* 辅助、占位 */
+
+  /* 语义色 */
+  --color-up:       #1A7A52;   /* 涨，绿 */
+  --color-down:     #C0392B;   /* 跌，红 */
+  --color-up-bg:    rgba(26, 122, 82, 0.08);
+  --color-down-bg:  rgba(192, 57, 43, 0.08);
+  --color-accent:   #5B4FBF;   /* 主色调，偏紫蓝，呼应 Claude */
+  --color-accent-bg: rgba(91, 79, 191, 0.10);
+  --color-warning:  #B36A00;
+  --color-warning-bg: rgba(179, 106, 0, 0.08);
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+
+  /* 圆角 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* 字体 */
+  --font-sans: 'Inter', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace;
+}
+
+[data-theme="dark"] {
+  --bg-page:       #1C1C1A;
+  --bg-surface:    #242422;
+  --bg-elevated:   #2E2E2B;
+  --bg-hover:      #323230;
+
+  --border-subtle:  rgba(255,255,255,0.06);
+  --border-default: rgba(255,255,255,0.10);
+  --border-strong:  rgba(255,255,255,0.18);
+
+  --text-primary:   #E8E6DF;
+  --text-secondary: #9C9A92;
+  --text-tertiary:  #5E5D58;
+
+  --color-up:       #34C77B;
+  --color-down:     #E05252;
+  --color-up-bg:    rgba(52, 199, 123, 0.10);
+  --color-down-bg:  rgba(224, 82, 82, 0.10);
+  --color-accent:   #8B7FE8;
+  --color-accent-bg: rgba(139, 127, 232, 0.12);
+  --color-warning:  #F0A830;
+  --color-warning-bg: rgba(240, 168, 48, 0.10);
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.4);
+}
+```
+
+### 3. 字体规范
+- **数字**：一律使用 `var(--font-mono)`，字重 500，便于对齐和扫描
+- **正文**：`var(--font-sans)`，字重 400
+- **标签/标题**：字重 500，letter-spacing: 0.01em
+- **禁止**使用 `font-weight: 700` 以上
+- **价格大数字**：font-size: 20-24px，mono，保留 2 位小数
+- **百分比**：font-size: 12-13px，带颜色 `--color-up/down`
+
+---
+
+## 布局结构
+
+采用三列布局，全屏固定高度，不出现页面滚动：
+
+```
+┌─────────────────────────────────────────────────────┐
+│  TopBar：Portfolio 总览 + 风险状态 + 控制开关        │  48px
+├──────────┬────────────────────────┬──────────────────┤
+│          │                        │                  │
+│  Left    │   Main（图表区）       │  Right Panel     │
+│  Sidebar │                        │  （订单/账户）   │
+│  240px   │   flex: 1              │  300px           │
+│          │                        │                  │
+│  币种列表│   K线图 Canvas         │  活跃订单        │
+│  + 价格  │   + 扫描结果列表       │  + 成交记录      │
+│  + 评分  │                        │  + 风险事件      │
+│          │                        │                  │
+└──────────┴────────────────────────┴──────────────────┘
+```
+
+- **TopBar**：高度 48px，sticky，背景 `--bg-surface`，底部 1px `--border-subtle`
+- **Left Sidebar**：宽度 240px，背景 `--bg-surface`，右侧 1px `--border-subtle`
+- **Main Area**：`flex: 1`，背景 `--bg-page`，内部 padding 12px
+- **Right Panel**：宽度 300px，背景 `--bg-surface`，左侧 1px `--border-subtle`
+
+---
+
+## 组件规范
+
+### Card（通用卡片）
+```css
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  box-shadow: var(--shadow-sm);
+}
+.card-header {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+```
+
+### Coin Row（左侧 Sidebar 中的币种行）
+每行高度 52px，包含：
+- 左：币种图标（16px 圆形占位）+ 币名（14px，primary）+ 评分 Badge
+- 右：价格（16px，mono，primary）+ 涨跌幅（12px，up/down 色）
+
+```
+┌────────────────────────────────────────┐
+│ ● BTC   [85]        43,280.50          │
+│                       +2.34%           │
+└────────────────────────────────────────┘
+```
+- active 状态：左侧 2px `--color-accent` 竖线 + `--bg-hover` 背景
+- hover 状态：`--bg-hover` 背景，过渡 120ms ease
+
+### Score Badge（评分徽章）
+```css
+/* 根据分值动态设色 */
+.badge { 
+  font-size: 10px; font-weight: 500; 
+  padding: 1px 5px; border-radius: 4px; 
+  font-family: var(--font-mono);
+}
+.badge-high   { background: var(--color-up-bg);      color: var(--color-up); }
+.badge-mid    { background: var(--color-accent-bg);   color: var(--color-accent); }
+.badge-low    { background: var(--border-subtle);     color: var(--text-tertiary); }
+/* 分值 >= 70: high, 50-69: mid, <50: low */
+```
+
+### TopBar 布局
+```
+[● RUNNING / ■ PAUSED]  [BTC $43,280]  ...      [$124,320 +3.2%]  [DD: -0.8%]  [🌙/☀]
+```
+- 左侧：运行状态指示器（绿点脉冲动画 / 灰方块）
+- 中间：主流币种价格快览（3-4 个，mono）
+- 右侧：账户净值 + 当日 PnL + 最大回撤指标 + 主题切换
+
+### Order Row（右侧订单面板）
+每行高度 64px，包含：
+- 第一行：`BUY BTC` + 状态 badge + 时间（右对齐）
+- 第二行：qty + fill_qty + 价格 + realized_pnl（右对齐，带颜色）
+
+```
+┌──────────────────────────────────────────┐
+│ ↑ BTC  [PARTIAL]               14:32:05  │
+│   0.05 / 0.12 @ 43,280.50    +$12.40    │
+└──────────────────────────────────────────┘
+```
+
+### Risk Event Banner
+出现风险事件时，在 TopBar 下方插入一条 banner：
+```
+[⚠] Max Drawdown triggered: -8.2%        [Dismiss]
+```
+颜色：`--color-down-bg` 背景，`--color-down` 文字，1px `--color-down` border-left
+
+### Scan Results（主区域下半部分）
+表格式展示，4列：Symbol | Score | Direction | Signal Detail  
+- 交替行背景：奇数行 `transparent`，偶数行 `--border-subtle`（透明度低）
+- 点击行 → 在左侧 Sidebar 激活该币种
+
+---
+
+## K线图规范（Canvas）
+
+使用 HTML5 Canvas 绘制，适配 `--bg-page` 背景：
+
+```javascript
+// 颜色从 CSS 变量读取（通过 getComputedStyle）
+const style = getComputedStyle(document.documentElement);
+const colorUp   = style.getPropertyValue('--color-up').trim();
+const colorDown = style.getPropertyValue('--color-down').trim();
+const colorGrid = style.getPropertyValue('--border-subtle').trim();
+const colorText = style.getPropertyValue('--text-tertiary').trim();
+
+// 蜡烛样式
+// 实体：涨 colorUp / 跌 colorDown，圆角 1px
+// 影线：同色，透明度 0.6
+// 网格线：colorGrid，1px，dashed (4,4)
+// 坐标轴文字：colorText，11px，var(--font-mono)
+```
+
+时间框架切换 Tab：`1m | 5m | 15m | 1H`，使用 pill 样式切换器。
+
+---
+
+## 动效规范
+
+- **所有状态切换**：`transition: background 120ms ease, color 120ms ease`
+- **价格数字更新**：数字变化时，播放 200ms fade（opacity 0.5 → 1）+ 颜色闪烁（绿/红 → 正常，300ms）
+- **运行状态绿点**：`@keyframes pulse` 循环，radius 放大 + 透明度下降
+- **新订单/成交**：行从 `--color-accent-bg` 渐变回 transparent，600ms
+- **禁止**：禁止使用任何 entrance animation 和大幅位移动效
+
+```css
+@keyframes pulse-dot {
+  0%   { box-shadow: 0 0 0 0 rgba(26,122,82,0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(26,122,82,0); }
+  100% { box-shadow: 0 0 0 0 rgba(26,122,82,0); }
+}
+@keyframes price-flash-up {
+  0%   { color: var(--color-up); }
+  100% { color: var(--text-primary); }
+}
+@keyframes price-flash-down {
+  0%   { color: var(--color-down); }
+  100% { color: var(--text-primary); }
+}
+```
+
+---
+
+## 排版 & 对齐原则
+
+### 数字对齐
+所有价格、数量、PnL 数字必须**右对齐**，使用 `text-align: right`。  
+同列数字使用相同小数位数，不足时补 `0`（如 `43,280.50` 而非 `43280.5`）。
+
+### 信息密度
+- 左 Sidebar：中密度，每行 52px，清晰但紧凑
+- 右 Panel：中低密度，每行 64px，状态一目了然
+- 禁止出现横向滚动条
+
+### 分割线使用原则
+- **优先使用间距**（gap/margin）分隔内容，而非添加分割线
+- 分割线只在跨越不同语义区块时使用，颜色 `--border-subtle`，高度 1px
+
+---
+
+## 可读性检查清单
+
+在输出代码前，验证以下各项：
+
+- [ ] 所有数字使用 mono 字体
+- [ ] 涨跌颜色仅用于数值，不用于背景大块着色
+- [ ] 卡片 header 标签使用全大写 + 0.06em letter-spacing
+- [ ] Dark mode 下所有文字对比度满足 WCAG AA（4.5:1）
+- [ ] 无任何 `font-weight: 700+` 使用
+- [ ] 价格数字保留统一小数位
+- [ ] 点击目标（按钮、行）最小高度 36px
+- [ ] 没有 `overflow: hidden` 导致内容被裁切的情况
+
+---
+
+## 需要重点改进的具体问题
+
+以下是当前前端的**已知痛点**，请在重构时逐一修复：
+
+1. **价格数字可读性差**：统一使用 mono 字体，固定小数位，加千分位分隔符
+2. **状态反馈不明确**：Running/Paused 状态需要明显的视觉指示器
+3. **信息层级模糊**：通过字体大小、颜色、间距建立清晰的 primary → secondary → tertiary 层级
+4. **扫描结果难以扫描**：改为结构化表格，评分加颜色 badge，方向加图标
+5. **订单状态不直观**：OPEN/PARTIAL/FILLED/CANCELLED 需要不同颜色的 badge
+6. **图表与行情数据脱节**：点击 Sidebar 中的币种，图表应立即切换
+7. **风险事件被淹没**：风险事件应在显眼位置以 banner 形式展示
+8. **深色模式缺失或不完整**：实现完整的 CSS 变量驱动 dark mode
+
+---
+
+## 文件修改范围
+
+只修改以下文件，不改动后端逻辑：
+- `index.html`：更新 DOM 结构、引入 Inter + JetBrains Mono 字体
+- `styles.css`：完整替换为新设计系统
+- `app.js`：保留所有 API 调用和状态管理逻辑，仅修改 DOM 操作和渲染函数
+
+WebSocket 事件处理、订单逻辑、扫描逻辑、行情拉取逻辑**全部保留不动**。
+
+---
+
+## 字体引入（index.html head 中）
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+```
+
+---
+
+## 输出要求
+
+1. 先输出完整的 `styles.css`
+2. 再输出修改后的 `index.html`（仅 body 部分结构变化）
+3. 最后输出 `app.js` 中**渲染相关函数**的修改（以 diff 或完整函数形式）
+4. 对每个重大结构决策简要说明原因（一句话）
