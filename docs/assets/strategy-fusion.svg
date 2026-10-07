@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="350" viewBox="0 0 960 350" role="img" aria-labelledby="title description">
+  <title id="title">Build a strategy, then test it</title>
+  <desc id="description">Workflow diagram. AI proposes a configuration; it does not prove profitability.</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#69b7ff"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#56d4ae"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#bb9cff"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#f4bf68"/>
+    </marker>
+  </defs>
+  <rect width="960" height="350" rx="16" fill="#0b1220"/>
+  <g font-family="DejaVu Sans, Arial, sans-serif">
+    <text x="30" y="43" fill="#e8eff7" font-size="24" text-anchor="start" font-weight="600">Build a strategy, then test it</text>
+    <text x="30" y="72" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Workflow diagram. AI proposes a configuration; it does not prove profitability.</text>
+    <rect x="30" y="121" width="212" height="171" rx="12" fill="#131f32" stroke="#334a65"/>
+    <rect x="30" y="137" width="4" height="139" rx="2" fill="#69b7ff"/>
+    <text x="48" y="152" fill="#69b7ff" font-size="18" text-anchor="start" font-weight="600">Indicator choices</text>
+    <text x="48" y="179" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Choose indicators</text>
+    <text x="48" y="202" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Set their weights</text>
+    <text x="48" y="225" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Describe your idea</text>
+    <rect x="287" y="115" width="206" height="84" rx="12" fill="#131f32" stroke="#334a65"/>
+    <rect x="287" y="131" width="4" height="52" rx="2" fill="#69b7ff"/>
+    <text x="305" y="146" fill="#69b7ff" font-size="18" text-anchor="start" font-weight="600">Manual construction</text>
+    <text x="305" y="173" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Edit weights yourself</text>
+    <rect x="287" y="231" width="206" height="96" rx="12" fill="#131f32" stroke="#334a65"/>
+    <rect x="287" y="247" width="4" height="64" rx="2" fill="#bb9cff"/>
+    <text x="305" y="262" fill="#bb9cff" font-size="18" text-anchor="start" font-weight="600">AI suggestion</text>
+    <text x="305" y="289" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">MiniMax configuration</text>
+    <text x="305" y="312" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">required for this path</text>
+    <rect x="537" y="167" width="174" height="115" rx="12" fill="#131f32" stroke="#334a65"/>
+    <rect x="537" y="183" width="4" height="83" rx="2" fill="#56d4ae"/>
+    <text x="555" y="198" fill="#56d4ae" font-size="18" text-anchor="start" font-weight="600">Saved strategy</text>
+    <text x="555" y="225" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Weights + metadata</text>
+    <text x="555" y="248" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Review before use</text>
+    <rect x="755" y="167" width="175" height="115" rx="12" fill="#131f32" stroke="#334a65"/>
+    <rect x="755" y="183" width="4" height="83" rx="2" fill="#56d4ae"/>
+    <text x="773" y="198" fill="#56d4ae" font-size="18" text-anchor="start" font-weight="600">Backtest</text>
+    <text x="773" y="225" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Inspect the result</text>
+    <text x="773" y="248" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">No profit guarantee</text>
+    <path d="M242 158 H287" fill="none" stroke="#69b7ff" stroke-width="2" marker-end="url(#arrow-blue)"/>
+    <path d="M242 263 H287" fill="none" stroke="#bb9cff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+    <path d="M493 157 H515 V196 H537" fill="none" stroke="#69b7ff" stroke-width="2" marker-end="url(#arrow-blue)"/>
+    <path d="M493 273 H515 V245 H537" fill="none" stroke="#bb9cff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+    <path d="M711 226 H755" fill="none" stroke="#56d4ae" stroke-width="2" marker-end="url(#arrow-green)"/>
+  </g>
+</svg>
