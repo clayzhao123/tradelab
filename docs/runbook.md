@@ -63,6 +63,8 @@ npm run dev --workspace frontend
 4. Orders：创建模拟订单，观察订单、成交和账户变化。
 5. Runner / History：创建、停止并查看会话；同时只允许一个 active run。
 
+订单行为：MARKET 按当前报价立即全量模拟成交；LIMIT 仅挂单，可取消，当前没有自动撮合。开始运行会话不会自动产生策略订单。回测是独立计算模块，其公式、统计口径与局限见 [当前计算方法](methodology.md)。
+
 WebSocket 默认为 `ws://localhost:3001/ws`，首次连接先接收 `snapshot`，之后应用增量事件。消息字段与重连处理见 [WebSocket 合约](websocket-contract.md)。
 
 ## 5. 数据保存与重启
