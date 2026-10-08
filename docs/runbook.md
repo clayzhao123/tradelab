@@ -29,13 +29,14 @@ Copy-Item frontend/.env.example frontend/.env
 首次演示将 `backend/.env` 改为：
 
 ```dotenv
+HOST=127.0.0.1
 DATABASE_URL=
 MARKET_DATA_PROVIDER=mock
 ```
 
 保留其他默认项即可。`frontend/.env` 的 API/WS 地址可留空，开发代理会连接本机 3001 端口。配置变更后重启对应服务。
 
-选择 `real` 会使用 OKX 公共行情，但请求失败时可能回退缓存或 mock；页面有数据不等于当前实时行情。手动策略不需要 AI。AI 策略建议需要在页面配置 MiniMax API key 与 model，并让 `MINIMAX_OPENAI_BASE_URL` 与密钥来源匹配，示例见 [后端环境配置](../backend/.env.example)。
+选择 `real` 会使用 Binance 行情与 CoinGecko 市值信息，但请求失败时可能回退缓存或 mock；页面有数据不等于当前实时行情。手动策略不需要 AI。AI 策略建议需要在页面配置 MiniMax API key 与 model，并让 `MINIMAX_OPENAI_BASE_URL` 与密钥来源匹配，示例见 [后端环境配置](../backend/.env.example)。
 
 ## 3. 启动与基本确认
 
@@ -105,4 +106,6 @@ smoke 检查基本 HTTP 与 WebSocket 流程，不等于交易策略有效性验
 | 第二个 run 无法启动 | 停止现有 active run，再创建新会话 |
 | 重启后订单或会话消失 | 当前这些状态存于内存，需后续实现持久化 |
 
-返回 [主 README](../README.md)。
+前端测试会生成 `frontend/.tmp-tests/`，这些文件已忽略，不要作为源码提交。API 路径与代码入口见 [开发参考](developer-reference.md)。
+
+返回 [主 README](../README.md) · [文档索引](README.md)。

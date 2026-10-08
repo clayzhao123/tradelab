@@ -1,38 +1,30 @@
-# README 图示维护
+# README 插图与维护
 
-这里保存主 README 的六张说明图。PNG 用于展示，SVG 是可编辑源文件。它们描述当前工作流程和系统结构，不是应用截图、实时数据或收益证明。
+主 README 使用三张由内置 imagegen 工具生成的概念插图，取代旧的六组方框式 SVG/PNG。插图解释用途与实验思路，不是应用截图、精确技术图或收益报告；技术关系保留为主 README 中可编辑的 Mermaid 文本。
 
-| 文件名（同名 `.svg` / `.png`） | 内容 |
-|---|---|
-| `strategy-fusion` | 手动策略与可选 AI 建议 |
-| `backtest-flow` | 回测输入、引擎和结果 |
-| `market-data` | 真实/模拟行情与回退 |
-| `paper-orders` | 风险检查、模拟成交和账户 |
-| `run-session` | 运行会话开始与停止 |
-| `architecture` | 前后端与存储边界 |
+| 资源 | 用途 | 图中可核对的文字 |
+|---|---|---|
+| [tradelab-cover.webp](tradelab-cover.webp) | 项目封面 | TradeLab / A place to test trading ideas / PAPER TRADING LAB |
+| [experiment-journey.webp](experiment-journey.webp) | 三个实验阶段 | 构建策略 / 历史回测 / 模拟交易 |
+| [strategy-building.webp](strategy-building.webp) | 手动与 AI 两条构建路径 | 手动组合 / AI 辅助 / AI 提供建议，由你检查和保存 |
 
-## 在 GitHub README 中显示
+## 设计与导出
 
-将 SVG 放入代码块，GitHub 会显示代码而不会将其当作图片。主 README 使用普通图片链接：
+统一方向为暖白背景、深蓝主体、少量青绿与珊瑚色，使用有触感的桌面实验工具表达抽象概念。原始生成尺寸为 1672 × 941，展示资源仅转为 WebP 并压缩，保留画面内容和尺寸。
+
+生成方式：内置 imagegen；不在文档中声明工具未暴露的具体模型版本。完整提示词见 [image-prompts.md](image-prompts.md)，便于后续重新生成和迭代。
+
+## 更新一张插图
+
+1. 先修改提示词，明确主题、必须正确的文字和能力边界。
+2. 生成后检查文字、构图和技术含义；不要加入虚构回测结果、盈利承诺或尚未实现的自动执行能力。
+3. 将选中的图片保存为同名 WebP，检查在浏览器中的清晰度；不需要修改应用代码。
+4. 同步更新主 README 的图片描述以及本页资源表。真正的应用截图应另行标注版本与数据来源。
+
+从根目录 README 引用时：
 
 ```markdown
-![策略构建流程](docs/assets/strategy-fusion.png)
-
-[查看 SVG 源图](docs/assets/strategy-fusion.svg)
+![三阶段实验概念](docs/assets/experiment-journey.webp)
 ```
 
-上面的相对路径以根目录 README 为起点；从其他目录引用时需调整路径。PNG 不需要阅读器支持嵌入 SVG。
-
-## 修改一张图
-
-1. 用 Inkscape 等矢量编辑器打开对应 SVG，或编辑其 XML。保持 `title` / `desc` 描述准确；XML 文本中的 `&` 必须写成 `&amp;`。
-2. 在仓库根目录重新导出同名 PNG，例如：
-
-```bash
-inkscape docs/assets/strategy-fusion.svg --export-type=png --export-filename=docs/assets/strategy-fusion.png --export-width=1440
-```
-
-3. 检查文字、箭头、裁切与 PNG 清晰度。源图使用 DejaVu Sans，回退字体为 Arial / sans-serif；更换字体后要重新检查排版。
-4. 同时提交 SVG 与 PNG。修改功能含义时，也更新主 README 中的文字和图片替代描述。
-
-Inkscape 仅用于维护这些文档图片，运行 TradeLab 不需要安装它。图中不应加入未经实际验证的收益、胜率或能力承诺。
+本目录不再维护旧 SVG。结构图需要修改时，直接编辑主 README 的 Mermaid 块；这样代码关系与审阅文字仍可精确维护。

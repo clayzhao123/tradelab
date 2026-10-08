@@ -1,70 +1,34 @@
-# TradeLab · 加密货币模拟交易实验台
+# TradeLab · 把交易想法变成可复盘的实验
 
-TradeLab 是一个本地运行的 Web 项目：查看行情、组合技术指标、用历史 K 线回测，再通过模拟订单观察账户变化。它的目的，是让策略想法有一个可以配置、运行和复盘的实验环境。
+![TradeLab：用于构建策略、检查历史表现和模拟交易的本地实验台](docs/assets/tradelab-cover.webp)
 
-**当前状态：开发中的实验原型。** 行情可来自 OKX 公共接口，交易成交由本地模拟；当前没有向交易所提交真实订单的执行接口。AI 可以提供策略配置建议，效果需要回测与进一步验证。
+**TradeLab 是一个在你自己电脑上运行的加密货币模拟交易实验台。** 你可以组合技术指标，用历史行情查看结果，再下模拟订单，观察资金与持仓如何变化。
 
-## 能做什么
+项目想解决的问题是：有一个交易想法之后，怎样把它变成可保存、可比较、可复盘的实验？目前已经有策略构建、回测、行情和模拟订单的主要模块，仍属于开发中的原型。
 
-| 功能 | 通俗解释 | 当前边界 |
+[快速启动](#快速启动) · [第一次实验](#第一次实验按这个顺序操作) · [当前边界](#目前做到哪里还有哪些边界) · [目录导航](#想继续开发从哪里开始) · [结构改善清单](docs/project-review.md)
+
+## 一次实验在做什么
+
+![构建策略、历史回测、模拟交易三个阶段的概念插图](docs/assets/experiment-journey.webp)
+
+| 阶段 | 你做什么 | 项目给你什么 |
 |---|---|---|
-| 行情与扫描 | 看价格、K 线、观察列表和扫描结果 | 可用真实或 mock 数据；上游失败时可能回退缓存或模拟数据 |
-| 策略实验室 | 选择指标、分配权重，保存组合方案 | AI 建议需要配置 MiniMax；手动配置不依赖 AI |
-| 历史回测 | 把策略放到历史 K 线上，看交易与权益变化 | 输出单币与组合分析，不代表未来收益 |
-| 模拟订单 | 创建买卖订单，观察成交、持仓和现金 | 支持 market / limit 和风险检查；不是实盘交易 |
-| 运行会话 | 开始、停止一次实验，再查看历史 | 当前一次只允许一个 active run；不能据此宣称已实现自动交易 Bot |
+| 构建策略 | 选择指标，调整各自的权重，保存一个方案 | 可修改的策略配置 |
+| 历史回测 | 选择币种、历史区间和参数，运行实验 | 收益、回撤、权益曲线及单币/组合分析 |
+| 模拟交易 | 设置模拟资金，创建买卖订单 | 订单、模拟成交、持仓和会话记录 |
 
-下方图片是**根据当前代码绘制的功能/架构说明图**，不是应用截图、实时行情或收益报告。README 使用 PNG 显示；每张图都保留 SVG 源文件，便于修改。
+例如，你可以比较同一方案在“中性”和“保守”设置下的结果，检查交易次数与回撤有何变化。**回测与模拟订单是两个独立模块：回测不会替你启动自动交易，模拟成交也不会向交易所提交真实订单。**
 
-## 1. 构建策略：手动配置或 AI 建议
+> 本页三张图片由图像模型生成，用来解释项目概念；它们不是应用截图，也不包含实测收益。具体操作和已实现能力以正文为准。
 
-先选择指标和权重，也可以让 AI 根据描述或已选指标提出组合建议；检查配置后保存，再去回测。
+## 快速启动
 
-![手动构建或 AI 建议生成策略，再进行回测](docs/assets/strategy-fusion.png)
+需要 Git、npm 和兼容 Vite 8 的 Node.js；例如 Node 22.12+ 或受支持的更高版本，见 [Vite 官方要求](https://vite.dev/guide/)。
 
-[查看 SVG 源图](docs/assets/strategy-fusion.svg)
+### 1. 下载并安装
 
-指标目录包括趋势、动量、波动率、成交量等类别。AI 输出配置建议和说明，不是“已经验证的高性能策略”。回测端会把指标的标签/类别映射为核心因子权重，具体机制见 [策略融合说明](docs/strategy-fusion-core-2026-04-04.md)。
-
-## 2. 回测：看实际运行结果
-
-选择策略、币种、时间框架与回看区间，查看收益、回撤、交易次数、暴露和组合权益等结果。回测支持 aggressive / neutral / conservative 决策强度。
-
-![策略设置和历史 K 线进入回测，输出单币与组合结果](docs/assets/backtest-flow.png)
-
-[查看 SVG 源图](docs/assets/backtest-flow.svg)
-
-收益率、胜率和回撤应以你实际运行的回测结果为准。回测自动阈值的实现也不表示运行会话已经复用同一套自动执行逻辑。
-
-## 3. 行情：区分真实来源与演示来源
-
-MARKET_DATA_PROVIDER=real 使用 OKX 公共行情；mock 使用本地模拟数据。真实源请求失败时，相关接口可能先用缓存，再回退 mock，因此不能仅凭“页面有价格”认定它是当前真实行情。
-
-![真实或模拟行情经后端 API 与 WebSocket 进入 Dashboard](docs/assets/market-data.png)
-
-[查看 SVG 源图](docs/assets/market-data.svg)
-
-## 4. 模拟订单：检查账户如何变化
-
-创建订单后，后端执行风险检查和模拟成交，并更新订单、成交、持仓与现金。可查看 new、open、partial、filled、cancelled、rejected 等状态。
-
-![模拟订单经过风险检查、成交模拟，再更新账户与历史](docs/assets/paper-orders.png)
-
-[查看 SVG 源图](docs/assets/paper-orders.svg)
-
-## 5. 运行会话：开始、停止、复盘
-
-选择保存的策略和初始模拟资金，开始一次 run；停止后查看相关记录。当前后端实现会话生命周期与状态管理，尚未实现“启动后自动按策略持续下单”的完整执行循环。
-
-![策略与资金配置进入运行会话，停止后查看历史](docs/assets/run-session.png)
-
-[查看 SVG 源图](docs/assets/run-session.svg)
-
-## 先启动一个本地演示
-
-### 准备
-
-使用满足 Vite 8 要求的 Node.js；例如 Node 22.12+ 或受支持的更高版本，要求见 [Vite 官方说明](https://vite.dev/guide/)。安装 Git 和 npm。
+在终端执行：
 
 ```bash
 git clone https://github.com/clayzhao123/tradelab.git
@@ -72,9 +36,9 @@ cd tradelab
 npm ci
 ```
 
-如果是在已有目录中操作，进入仓库根目录后执行 npm ci 即可。根目录用 npm workspaces 同时管理 frontend/ 与 backend/，不要把 frontend_module/ 当成当前应用。
+已有仓库时，进入它的根目录后执行 `npm ci`。
 
-### 复制配置
+### 2. 复制配置
 
 macOS / Linux：
 
@@ -90,123 +54,110 @@ Copy-Item backend/.env.example backend/.env
 Copy-Item frontend/.env.example frontend/.env
 ```
 
-首次演示建议把 backend/.env 中以下两行设为：
+打开 `backend/.env`，首次演示将下面三项设为：
 
 ```dotenv
+HOST=127.0.0.1
 DATABASE_URL=
 MARKET_DATA_PROVIDER=mock
 ```
 
-这样可先使用本地模拟行情与文件回退存储，不需要先配置数据库或外部 AI。需要真实行情时改为 real。frontend/.env 的 API/WS 地址可以留空，开发服务器会代理到本机 3001 端口。
+其他项保留默认值。`frontend/.env` 的 API/WS 地址留空即可，开发服务器会代理到本机后端。这样先用模拟行情跑通流程，不需要数据库或 AI 密钥。
 
-### 启动
+### 3. 启动并打开页面
 
-在仓库根目录运行：
+在仓库根目录执行：
 
 ```bash
 npm run dev
 ```
 
-这条命令同时启动前后端。浏览器打开终端显示的前端地址，默认是 [http://localhost:5173](http://localhost:5173)；后端健康检查为 [http://localhost:3001/health](http://localhost:3001/health)。
+这条命令同时启动前后端。打开终端显示的前端地址，默认是 **http://localhost:5173**。后端健康检查为 http://localhost:3001/health。
 
-没有根目录 npm start 脚本。需要单独启动时，使用：
+启动后应能看到 Dashboard 和行情数据。此时配置为 `mock`，显示的是演示数据。若页面有错误，先检查后端健康地址；其他排查步骤见 [运行手册](docs/runbook.md)。
 
-```bash
-npm run dev --workspace backend
-npm run dev --workspace frontend
+## 第一次实验：按这个顺序操作
+
+### 1. 手动建立一个策略
+
+打开 **Strategy Lab**（`/strategy`），选择至少两个指标，例如各选一个趋势类和动量类指标；调整权重，使总和为 100%，命名并保存。
+
+![手动调整指标权重，或由 AI 提出建议后人工检查和保存](docs/assets/strategy-building.webp)
+
+策略有两条构建路径：
+
+- **手动组合**：你自己选择指标和权重，不需要 AI。
+- **AI 辅助**：在页面保存 MiniMax 的 model 和 API key，再按文字描述或已选指标生成建议；检查结果，应用到草稿，然后保存。
+
+AI 输出的评分和雷达图是模型的建议性评价，**不是回测成绩**。当前回测会把所选指标的类别/标签映射成六个核心因子；它还不是对指标目录中每个指标原始公式的逐项执行。机制见 [策略融合说明](docs/strategy-fusion-core-2026-04-04.md)。
+
+### 2. 跑一次历史回测
+
+打开 **Backtest**（`/backtest`），选择刚保存的策略，先选少量币种，使用日线、中性模式和页面默认的回看区间及模拟资金，再运行回测。
+
+优先看三件事：权益曲线如何变化、最大回撤有多大、发生了多少次交易。回看区间按 K 线根数配置，例如日线 365 根约对应一年，实际可用长度取决于数据来源。
+
+回测页支持历史记录、结果详情和多次结果比较。回测结果保存在该页的历史中；`/history` 主要查看运行会话，二者不是同一类记录。
+
+### 3. 观察模拟订单与会话
+
+| 页面 | 操作 | 可以观察什么 |
+|---|---|---|
+| Bot Runner（`/runner`，可选） | 选择策略与初始模拟资金，开始会话 | 当前运行状态；同时仅允许一个 active run |
+| Orders（`/orders`） | 选择币种、BUY/SELL、MARKET/LIMIT，输入数量后创建订单 | 风险检查、订单状态与模拟成交；数量是币的数量，不是 USDT 金额 |
+| Dashboard（`/`） | 查看账户与行情面板 | 现金、持仓及账户变化 |
+| Bot Runner / History（`/history`） | 停止会话，再查看相关记录 | 会话、成交与事件记录 |
+
+Runner 的按钮目前叫 “DEPLOY & START BOT”，实际后端实现的是**会话开始/停止及状态管理**，尚未接上按策略持续自动下单的完整执行循环。未创建会话时，也可以从 Orders 创建手动模拟订单。
+
+## 目前做到哪里，还有哪些边界
+
+| 当前状态 | 对使用者意味着什么 |
+|---|---|
+| 策略、回测、行情、模拟订单和会话模块已实现 | 可以开展本地实验；本 README 不据此宣称已有经过长期验证的盈利策略 |
+| 默认 `real` 模式使用 Binance 行情及 CoinGecko 市值信息 | 首次运行建议明确设为 `mock`；真实请求失败时可能使用缓存或模拟回退 |
+| 策略、AI 设置、回测历史有文件回退存储 | 非测试环境写入 `backend/.data/`；AI 设置可能包含密钥，不应提交或分享 |
+| 订单、成交、账户、运行会话仍在内存 | 后端重启后，这些状态不会像文件数据一样保留 |
+| PostgreSQL repository 已有代码，`pg` 依赖尚未声明 | 填写 `DATABASE_URL` 不等于已经启用数据库，需补齐依赖、迁移并验证 |
+| 回测实现仍需要方法校验 | 当前阈值按整个样本估算；“年线”还映射为月线请求，不能把显示标签直接当作严格的时间口径 |
+
+这些限制及改进顺序见 [结构与维护审查](docs/project-review.md)。
+
+## 想继续开发，从哪里开始
+
+当前有两个 npm workspace：`frontend/` 是界面，`backend/` 是 API 和业务逻辑。**`frontend_module/` 是原始设计参考，不是当前应用入口。**
+
+| 位置 | 放什么 | 什么时候看 |
+|---|---|---|
+| [frontend/](frontend/README.md) | 页面、图表、界面交互 | 修改页面或使用体验 |
+| [backend/src/modules/](backend/src/modules/) | 行情、策略、回测、订单、会话等模块 | 修改业务行为 |
+| [backend/src/repositories/](backend/src/repositories/) | 策略、AI 设置、回测历史的存储实现 | 修改保存方式 |
+| [database/](database/) | PostgreSQL schema、迁移和 seed | 准备启用数据库 |
+| [docs/](docs/README.md) | 运行、设计、接口和维护说明 | 查找项目知识 |
+| [scripts/v1-smoke.mjs](scripts/v1-smoke.mjs) | HTTP/WebSocket 基本流程检查 | 检查前后端联通 |
+| [frontend_module/](frontend_module/README.md) | 原始 Figma 设计代码 | 查阅历史设计 |
+| `memory/`、`skill/` | 开发交接与协作记录 | 恢复开发背景；不代表功能已完成 |
+
+技术栈：React 19、TypeScript 5.9、Vite 8、Tailwind CSS 4；后端 Fastify 5，自定义 WebSocket 网关。
+
+当前系统关系如下。插图负责解释概念，这张可编辑结构图负责准确说明代码关系：
+
+```mermaid
+flowchart TD
+    UI["React 页面"] -->|"HTTP / WebSocket"| API["Fastify 后端"]
+    API --> MARKET["行情与扫描"]
+    API --> EXP["策略与回测"]
+    API --> PAPER["模拟订单与会话"]
+    MARKET --> SOURCE["Binance / CoinGecko / mock"]
+    EXP --> REPO["存储接口"]
+    REPO --> FILE["JSON 文件回退"]
+    REPO -.-> PG["可选 PostgreSQL"]
+    PAPER --> MEMORY["MemoryDb 运行内存"]
 ```
 
-两个命令分别在两个终端执行。后端使用默认端口 3001；若更改它，需要同时修改 frontend/vite.config.ts 的代理目标。
+## 修改后怎样检查
 
-## 第一次使用顺序
-
-1. 在 Dashboard 查看行情，并确认是 mock 演示还是 real 来源。
-2. 在 Strategy Lab 手动创建一个组合；需要 AI 时在页面配置 MiniMax provider、model 和 API key。
-3. 在 Backtest 选择策略与数据区间，查看结果，不把插图当作实测。
-4. 在 Orders 创建模拟订单，观察订单、成交和账户变化。
-5. 在 Runner 创建/停止会话，在 History 复盘。
-
-AI 设置的后端路径是 /api/v1/ai/config，生成建议的路径是 /api/v1/ai/fusion/generate。接口 base URL 可通过 MINIMAX_OPENAI_BASE_URL 调整，具体来源示例见 [backend/.env.example](backend/.env.example)。
-
-## 页面导航
-
-| 路径 | 页面 | 作用 |
-|---|---|---|
-| / | Dashboard | 行情、K 线、观察列表与扫描 |
-| /strategy | Strategy Lab | 指标选择、权重与 AI 建议 |
-| /backtest | Backtest | 历史回测与结果分析 |
-| /orders | Orders | 模拟订单与成交 |
-| /runner | Bot Runner | 当前实现为实验会话管理 |
-| /history | History | 查看运行记录 |
-
-## 当前系统结构
-
-![React 前端连接 Fastify 后端，后端分别使用行情源、运行内存与持久化仓库](docs/assets/architecture.png)
-
-[查看 SVG 源图](docs/assets/architecture.svg)
-
-| 位置 | 当前用途 |
-|---|---|
-| frontend/ | 正在使用的 React 前端 |
-| backend/ | Fastify API、行情、回测、订单和会话服务 |
-| database/ | PostgreSQL schema、迁移与 seed |
-| docs/ | 设计、领域说明与运行手册 |
-| docs/assets/ | 本 README 的 PNG 图片和 SVG 源文件 |
-| scripts/v1-smoke.mjs | HTTP 与 WebSocket 基本流程检查 |
-| frontend_module/ | 原始设计参考代码，不属于根目录 npm workspaces |
-| memory/、skill/ | 开发交接记录与协作说明，不是运行服务 |
-
-实际技术栈来自当前 package.json：React 19、TypeScript 5.9、Vite 8、Tailwind CSS 4；后端是 Fastify 5。WebSocket 由后端网关实现。
-
-## 哪些数据会保留
-
-存储有两层，不能把“有 database/ 目录”理解成所有业务都已持久化：
-
-| 数据 | 当前存储 |
-|---|---|
-| 策略、AI provider 设置、回测历史 | 开发模式默认回退到 backend/.data/ JSON 文件；可选 PostgreSQL repository |
-| 模拟订单、成交、账户、运行会话及相关运行历史 | 当前 MemoryDb，后端重启后不应期待保留 |
-| 测试中的 repository 回退 | 内存，与开发模式文件回退不同 |
-
-PostgreSQL 接口已写在代码中，但 backend/package.json 尚未声明 pg 依赖；只填写 DATABASE_URL 不足以保证启用。要使用它，需要安装 pg、建立数据库并执行迁移，随后确认后端连接日志。AI 设置文件可能包含密钥，.env 和 .data/ 不应提交或分享。
-
-## 配置项
-
-| 配置 | 默认值/用途 |
-|---|---|
-| HOST / PORT | 0.0.0.0 / 3001，后端监听地址 |
-| MARKET_DATA_PROVIDER | real；首次演示可设 mock |
-| DATABASE_URL | env.ts 默认空；.env.example 有示例连接串 |
-| WS_PATH | /ws |
-| WS_HEARTBEAT_INTERVAL_MS | 15000 |
-| MINIMAX_OPENAI_BASE_URL | API base，默认值与国内/国际配置见 .env.example |
-| VITE_API_BASE_URL / VITE_WS_BASE_URL | 开发时留空可使用 Vite 代理 |
-
-## 常用接口与事件
-
-当前业务 API 前缀是 /api/v1。
-
-| 方法 | 路径 | 用途 |
-|---|---|---|
-| GET | /health | 健康检查 |
-| GET | /api/v1/system/status | 系统状态 |
-| GET | /api/v1/market/watchlist | 观察列表 |
-| GET | /api/v1/quotes | 行情 |
-| GET | /api/v1/klines | K 线，参数见路由 schema |
-| GET / POST | /api/v1/strategies | 列出/创建策略 |
-| GET / POST | /api/v1/orders | 列出/创建模拟订单 |
-| DELETE | /api/v1/orders/:id | 取消订单 |
-| GET | /api/v1/fills | 成交 |
-| POST | /api/v1/backtest/run | 回测 |
-| GET | /api/v1/backtest/history | 回测记录 |
-| GET / POST | /api/v1/runs | 列出/开始会话 |
-| POST | /api/v1/runs/:id/stop | 停止会话 |
-
-WebSocket 默认为 ws://localhost:3001/ws。先接收 snapshot，再应用 dashboard.updated、order.updated、fill.created、run.updated、account.updated、risk.triggered 等事件。消息结构与重连约定见 [WebSocket 合约](docs/websocket-contract.md)，完整参数以 backend/src/modules/ 下的 *.routes.ts 为准。
-
-## 修改与检查
-
-在仓库根目录运行：
+在根目录执行：
 
 ```bash
 npm test
@@ -214,12 +165,6 @@ npm run build
 npm run lint --workspace frontend
 ```
 
-后端已启动时，可另开终端运行：
+后端已启动时，另开终端执行 `npm run smoke:v1`。测试结果应记录在对应 PR；基本流程通过不等于策略有效性已验证。
 
-```bash
-npm run smoke:v1
-```
-
-修改功能时，先运行测试与构建，再用 smoke 检查服务之间的基本流程。将实际结果记录在对应 PR，方便下次继续开发。
-
-更多说明：[本地运行手册](docs/runbook.md) · [前端说明](frontend/README.md) · [页面职责](docs/page-semantics.md) · [图示维护方式](docs/assets/README.md)。
+更多说明：[运行手册](docs/runbook.md) · [开发与接口参考](docs/developer-reference.md) · [结构改善清单](docs/project-review.md) · [文档索引](docs/README.md) · [插图与提示词](docs/assets/README.md)。

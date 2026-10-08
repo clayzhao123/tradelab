@@ -43,4 +43,4 @@ npm run lint --workspace frontend
 npm run build --workspace frontend
 ```
 
-`npm run preview --workspace frontend` 用于预览已构建的前端，仍需正确配置 API/WS 地址或反向代理。完整前后端检查见 [主 README](../README.md#修改与检查)。
+`npm run preview --workspace frontend` 用于预览已构建的前端，仍需正确配置 API/WS 地址或反向代理。完整前后端检查见 [主 README](../README.md#修改后怎样检查)。
