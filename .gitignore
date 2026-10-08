@@ -1,3 +1,17 @@
-node_modules
+# Dependencies
+node_modules/
 npm-debug.log*
+
+# Local configuration (keep templates)
+.env
+.env.*
+!.env.example
+
+# Local persisted data
 backend/.data/
+
+# Generated outputs
+frontend/dist/
+backend/dist/
+frontend/.tmp-tests/
+*.tsbuildinfo
