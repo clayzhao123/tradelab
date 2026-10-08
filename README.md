@@ -1,462 +1,225 @@
-# tradelab - Crypto Paper Trading Lab
-
-tradelab 是一个 **Web 版加密货币模拟交易实验台**，支持 AI 策略融合、实时行情监控、智能扫描和回测功能。
-
-![tradelab](https://img.shields.io/badge/version-v2.4.0-blue) ![React](https://img.shields.io/badge/React-18.2-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue) ![License](https://img.shields.io/badge/license-MIT-green)
-
----
-
-## 功能特性
-
-### 1. AI 融合策略引擎 (Indicator Fusion Lab)
-
-传统指标组合依赖经验，而 tradelab 的 AI 融合引擎可以将多个基础技术指标智能组合，生成高性能自定义策略。
-
-```
-支持的基础指标:
-├── RSI (Relative Strength Index)      - 动量指标
-├── MACD (Moving Average Convergence)  - 趋势指标
-├── Bollinger Bands                    - 波动率指标
-├── EMA Cross                          - 趋势指标
-├── ATR (Average True Range)            - 波动率指标
-├── Stochastic                          - 动量指标
-├── Volume Profile                      - 成交量指标
-└── OBV (On-Balance Volume)           - 成交量指标
-```
-
-**融合流程:**
-
-```svg
-<svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Base Indicators -->
-  <rect x="10" y="30" width="80" height="30" rx="4" fill="#3b82f6" opacity="0.8"/>
-  <text x="50" y="50" fill="white" font-size="11" text-anchor="middle">RSI</text>
-
-  <rect x="10" y="70" width="80" height="30" rx="4" fill="#3b82f6" opacity="0.8"/>
-  <text x="50" y="90" fill="white" font-size="11" text-anchor="middle">MACD</text>
-
-  <rect x="10" y="110" width="80" height="30" rx="4" fill="#3b82f6" opacity="0.8"/>
-  <text x="50" y="130" fill="white" font-size="11" text-anchor="middle">Bollinger</text>
-
-  <rect x="10" y="150" width="80" height="30" rx="4" fill="#3b82f6" opacity="0.8"/>
-  <text x="50" y="170" fill="white" font-size="11" text-anchor="middle">ATR</text>
-
-  <!-- Arrows -->
-  <line x1="95" y1="45" x2="180" y2="90" stroke="#6366f1" stroke-width="2" stroke-dasharray="4"/>
-  <line x1="95" y1="85" x2="180" y2="90" stroke="#6366f1" stroke-width="2" stroke-dasharray="4"/>
-  <line x1="95" y1="125" x2="180" y2="90" stroke="#6366f1" stroke-width="2" stroke-dasharray="4"/>
-  <line x1="95" y1="165" x2="180" y2="90" stroke="#6366f1" stroke-width="2" stroke-dasharray="4"/>
-
-  <!-- AI Fusion Chamber -->
-  <rect x="200" y="50" width="160" height="80" rx="8" fill="#1e1b4b" stroke="#6366f1" stroke-width="2"/>
-  <text x="280" y="85" fill="#a5b4fc" font-size="12" text-anchor="middle">AI FUSION</text>
-  <text x="280" y="105" fill="#a5b4fc" font-size="12" text-anchor="middle">CHAMBER</text>
-  <circle cx="280" cy="75" r="8" fill="#6366f1" opacity="0.6">
-    <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
-  </circle>
-
-  <!-- Output Arrow -->
-  <line x1="365" y1="90" x2="430" y2="90" stroke="#22c55e" stroke-width="3"/>
-
-  <!-- Strategy Result -->
-  <rect x="440" y="40" width="150" height="100" rx="6" fill="#052e16" stroke="#22c55e" stroke-width="2"/>
-  <text x="515" y="70" fill="#22c55e" font-size="12" font-weight="bold" text-anchor="middle">RSI-MACD</text>
-  <text x="515" y="85" fill="#22c55e" font-size="12" font-weight="bold" text-anchor="middle">Alpha Matrix</text>
-  <text x="515" y="110" fill="#86efac" font-size="16" font-weight="bold" text-anchor="middle">Score: 92</text>
-</svg>
-```
-
-**AI 融合特点:**
-- 最多同时选择 5 个指标进行融合
-- 智能分析指标间的相关性
-- 自动生成策略逻辑说明
-- 输出策略评分 (0-100)
-
----
-
-### 2. 回测引擎 (Backtest Engine)
-
-在历史数据上验证融合策略的有效性，支持多币种、多时间框架回测。
-
-```svg
-<svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
-  <!-- Grid -->
-  <defs>
-    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#334155" stroke-width="0.5" opacity="0.3"/>
-    </pattern>
-  </defs>
-  <rect width="500" height="250" fill="url(#grid)"/>
-
-  <!-- Equity Curve -->
-  <path d="M 30 200 Q 80 180, 120 170 T 200 140 T 280 120 T 360 80 T 450 50"
-        fill="none" stroke="#22c55e" stroke-width="3"/>
-  <path d="M 30 200 Q 80 180, 120 170 T 200 140 T 280 120 T 360 80 T 450 50 L 450 220 L 30 220 Z"
-        fill="url(#equityGrad)" opacity="0.3"/>
-
-  <defs>
-    <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#22c55e"/>
-      <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Labels -->
-  <text x="30" y="30" fill="#22c55e" font-size="14" font-weight="bold">+124.5% Total Return</text>
-  <text x="30" y="50" fill="#94a3b8" font-size="11">Win Rate: 68.2% | Max DD: -12.4% | Trades: 1,432</text>
-
-  <!-- Pair Performance Bars -->
-  <rect x="30" y="180" width="100" height="12" rx="2" fill="#3b82f6" opacity="0.6"/>
-  <text x="140" y="190" fill="#3b82f6" font-size="10">BTC/USDT: +45.2%</text>
-
-  <rect x="30" y="200" width="40" height="12" rx="2" fill="#8b5cf6" opacity="0.6"/>
-  <text x="80" y="210" fill="#8b5cf6" font-size="10">ETH/USDT: +12.1%</text>
-</svg>
-```
-
-**回测指标:**
-- 总收益率 (Total Return)
-- 胜率 (Win Rate)
-- 最大回撤 (Max Drawdown)
-- 总交易次数 (Total Trades)
-- 权益曲线 (Equity Curve)
-
----
-
-### 3. 实时行情监控 (Live Dashboard)
-
-```svg
-<svg viewBox="0 0 600 180" xmlns="http://www.w3.org/2000/svg">
-  <!-- Candlestick Chart Area -->
-  <rect x="10" y="10" width="400" height="120" rx="4" fill="#0f172a" stroke="#334155"/>
-  <text x="20" y="30" fill="#94a3b8" font-size="11">BTC / USD</text>
-
-  <!-- Candlesticks -->
-  <g transform="translate(60, 40)">
-    <!-- Candle 1-5 -->
-    <line x1="10" y1="15" x2="10" y2="5" stroke="#22c55e" stroke-width="1"/>
-    <rect x="5" y="15" width="10" height="20" fill="#22c55e" rx="1"/>
-    <line x1="35" y1="25" x2="35" y2="10" stroke="#22c55e" stroke-width="1"/>
-    <rect x="30" y="10" width="10" height="15" fill="#22c55e" rx="1"/>
-    <line x1="60" y1="20" x2="60" y2="12" stroke="#ef4444" stroke-width="1"/>
-    <rect x="55" y="12" width="10" height="8" fill="#ef4444" rx="1"/>
-    <line x1="85" y1="22" x2="85" y2="8" stroke="#22c55e" stroke-width="1"/>
-    <rect x="80" y="8" width="10" height="14" fill="#22c55e" rx="1"/>
-    <line x1="110" y1="18" x2="110" y2="6" stroke="#22c55e" stroke-width="1"/>
-    <rect x="105" y="6" width="10" height="12" fill="#22c55e" rx="1"/>
-  </g>
-
-  <!-- Sidebar Watchlist -->
-  <rect x="420" y="10" width="170" height="120" rx="4" fill="#1e293b" stroke="#334155"/>
-  <text x="430" y="30" fill="#64748b" font-size="10" font-weight="bold">WATCHLIST</text>
-
-  <g transform="translate(430, 45)">
-    <text x="0" y="0" fill="#f8fafc" font-size="11">BTC</text>
-    <text x="80" y="0" fill="#f8fafc" font-size="11">43,280</text>
-    <text x="140" y="0" fill="#22c55e" font-size="10">+2.34%</text>
-
-    <text x="0" y="18" fill="#f8fafc" font-size="11">ETH</text>
-    <text x="80" y="18" fill="#f8fafc" font-size="11">2,314</text>
-    <text x="140" y="18" fill="#22c55e" font-size="10">+1.12%</text>
-
-    <text x="0" y="36" fill="#f8fafc" font-size="11">SOL</text>
-    <text x="80" y="36" fill="#f8fafc" font-size="11">108.45</text>
-    <text x="140" y="36" fill="#ef4444" font-size="10">-0.54%</text>
-
-    <text x="0" y="54" fill="#f8fafc" font-size="11">AVAX</text>
-    <text x="80" y="54" fill="#f8fafc" font-size="11">35.60</text>
-    <text x="140" y="54" fill="#22c55e" font-size="10">+5.40%</text>
-  </g>
-
-  <!-- Scan Results -->
-  <rect x="10" y="140" width="580" height="35" rx="4" fill="#1e293b" stroke="#334155"/>
-  <text x="20" y="162" fill="#64748b" font-size="10" font-weight="bold">SCAN RESULTS</text>
-  <text x="130" y="162" fill="#22c55e" font-size="11">BTC: 85 LONG</text>
-  <text x="230" y="162" fill="#22c55e" font-size="11">ETH: 72 LONG</text>
-  <text x="330" y="162" fill="#94a3b8" font-size="11">SOL: 65 NEUTRAL</text>
-  <text x="450" y="162" fill="#ef4444" font-size="11">DOGE: 42 SHORT</text>
-</svg>
-```
-
-**监控功能:**
-- 多币种实时价格 (BTC, ETH, SOL, BNB, DOGE, AVAX, LINK, DOT)
-- K 线图表 (支持 1m, 5m, 15m, 1H 时间框架)
-- 智能扫描评分 (0-100)
-- 交易方向信号 (LONG / SHORT / NEUTRAL)
-
----
-
-### 4. 订单管理 (Orders & Activity)
-
-```svg
-<svg viewBox="0 0 600 150" xmlns="http://www.w3.org/2000/svg">
-  <!-- Order Table -->
-  <rect x="10" y="10" width="580" height="30" rx="4" fill="#1e293b"/>
-  <text x="25" y="28" fill="#64748b" font-size="10">STATUS</text>
-  <text x="100" y="28" fill="#64748b" font-size="10">SIDE</text>
-  <text x="160" y="28" fill="#64748b" font-size="10">SYMBOL</text>
-  <text x="230" y="28" fill="#64748b" font-size="10">QTY</text>
-  <text x="300" y="28" fill="#64748b" font-size="10">FILLED</text>
-  <text x="380" y="28" fill="#64748b" font-size="10">PRICE</text>
-  <text x="460" y="28" fill="#64748b" font-size="10">P&L</text>
-
-  <!-- Order Row 1 -->
-  <rect x="10" y="45" width="580" height="30" rx="0" fill="#0f172a"/>
-  <rect x="25" y="52" width="55" height="16" rx="3" fill="#22c55e" opacity="0.2"/>
-  <text x="52" y="64" fill="#22c55e" font-size="9" text-anchor="middle">PARTIAL</text>
-  <text x="100" y="64" fill="#22c55e" font-size="10" font-weight="bold">↑ BUY</text>
-  <text x="160" y="64" fill="#f8fafc" font-size="10">BTC</text>
-  <text x="230" y="64" fill="#94a3b8" font-size="10">0.12</text>
-  <text x="300" y="64" fill="#94a3b8" font-size="10">0.05</text>
-  <text x="380" y="64" fill="#f8fafc" font-size="10">$43,280</text>
-  <text x="460" y="64" fill="#22c55e" font-size="10">+$12.40</text>
-
-  <!-- Order Row 2 -->
-  <rect x="10" y="75" width="580" height="30" rx="0" fill="#1e293b"/>
-  <rect x="25" y="82" width="45" height="16" rx="3" fill="#f59e0b" opacity="0.2"/>
-  <text x="47" y="94" fill="#f59e0b" font-size="9" text-anchor="middle">OPEN</text>
-  <text x="100" y="94" fill="#ef4444" font-size="10" font-weight="bold">↓ SELL</text>
-  <text x="160" y="94" fill="#f8fafc" font-size="10">ETH</text>
-  <text x="230" y="94" fill="#94a3b8" font-size="10">2.50</text>
-  <text x="300" y="94" fill="#94a3b8" font-size="10">0.00</text>
-  <text x="380" y="94" fill="#f8fafc" font-size="10">$2,350</text>
-  <text x="460" y="94" fill="#94a3b8" font-size="10">—</text>
-
-  <!-- Order Row 3 -->
-  <rect x="10" y="105" width="580" height="30" rx="0" fill="#0f172a"/>
-  <rect x="25" y="112" width="45" height="16" rx="3" fill="#22c55e" opacity="0.2"/>
-  <text x="47" y="124" fill="#22c55e" font-size="9" text-anchor="middle">FILLED</text>
-  <text x="100" y="124" fill="#22c55e" font-size="10" font-weight="bold">↑ BUY</text>
-  <text x="160" y="124" fill="#f8fafc" font-size="10">SOL</text>
-  <text x="230" y="124" fill="#94a3b8" font-size="10">15.00</text>
-  <text x="300" y="124" fill="#94a3b8" font-size="10">15.00</text>
-  <text x="380" y="124" fill="#f8fafc" font-size="10">$105.20</text>
-  <text x="460" y="124" fill="#ef4444" font-size="10">-$4.50</text>
-</svg>
-```
-
-**订单功能:**
-- 订单状态追踪 (OPEN / PARTIAL / FILLED / CANCELLED)
-- 多维度筛选和搜索
-- 实时盈亏统计
-- 订单导出 (CSV)
-
----
-
-### 5. Bot 部署 (Bot Deployment)
-
-```svg
-<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Config Panel -->
-  <rect x="10" y="10" width="480" height="180" rx="8" fill="#1e293b" stroke="#334155"/>
-
-  <!-- Bot Icon -->
-  <circle cx="80" cy="50" r="25" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
-  <text x="80" y="56" text-anchor="middle" fill="#22c55e" font-size="20">🤖</text>
-  <circle cx="100" cy="35" r="5" fill="#22c55e">
-    <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/>
-  </circle>
-
-  <text x="250" y="45" fill="#f8fafc" font-size="14" font-weight="bold" text-anchor="middle">Deploy Trading Bot</text>
-  <text x="250" y="65" fill="#64748b" font-size="11" text-anchor="middle">Configure parameters and launch your automated strategy</text>
-
-  <!-- Parameters -->
-  <text x="30" y="95" fill="#64748b" font-size="10">STRATEGY</text>
-  <rect x="30" y="102" width="140" height="28" rx="4" fill="#0f172a" stroke="#334155"/>
-  <text x="100" y="120" fill="#f8fafc" font-size="11" text-anchor="middle">RSI-MACD Alpha</text>
-
-  <text x="190" y="95" fill="#64748b" font-size="10">TRADE SIZE</text>
-  <rect x="190" y="102" width="70" height="28" rx="4" fill="#0f172a" stroke="#334155"/>
-  <text x="225" y="120" fill="#f8fafc" font-size="11" text-anchor="middle">5%</text>
-
-  <text x="280" y="95" fill="#64748b" font-size="10">LEVERAGE</text>
-  <rect x="280" y="102" width="70" height="28" rx="4" fill="#0f172a" stroke="#334155"/>
-  <text x="315" y="120" fill="#f8fafc" font-size="11" text-anchor="middle">1x</text>
-
-  <text x="370" y="95" fill="#ef4444" font-size="10">STOP LOSS</text>
-  <rect x="370" y="102" width="60" height="28" rx="4" fill="#0f172a" stroke="#ef4444"/>
-  <text x="400" y="120" fill="#ef4444" font-size="11" text-anchor="middle">2.5%</text>
-
-  <text x="445" y="95" fill="#22c55e" font-size="10">TAKE PROFIT</text>
-  <rect x="445" y="102" width="60" height="28" rx="4" fill="#0f172a" stroke="#22c55e"/>
-  <text x="475" y="120" fill="#22c55e" font-size="11" text-anchor="middle">5.0%</text>
-
-  <!-- Deploy Button -->
-  <rect x="30" y="145" width="440" height="35" rx="6" fill="#22c55e"/>
-  <text x="250" y="168" fill="white" font-size="13" font-weight="bold" text-anchor="middle">▶ DEPLOY & START BOT</text>
-</svg>
-```
-
-**部署参数:**
-- 策略选择
-- 交易规模 (% of Equity)
-- 杠杆倍数 (1x-5x)
-- 止损/止盈设置
-- 每日最大回撤限制
-
----
-
-## 系统架构
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         Frontend (React)                        │
-├──────────┬──────────┬──────────┬──────────┬──────────┬───────────┤
-│Dashboard│ Orders   │ Strategy │ Backtest │ Runner   │ History  │
-│         │          │ Lab      │ Engine   │          │          │
-└────┬────┴────┬─────┴────┬─────┴────┬─────┴────┬────┴────┬──────┘
-     │         │         │         │         │         │
-     └─────────┴─────────┴─────────┴─────────┴─────────┘
-                              │ WebSocket + REST API
-┌─────────────────────────────┴───────────────────────────────────┐
-│                    Backend (Node.js + Express)                  │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐ │
-│  │ REST API    │  │ WebSocket    │  │ Scheduler (60s interval) │ │
-│  │ /api/*      │  │ Server       │  │ - Market Data Update    │ │
-│  │             │  │              │  │ - Multi-coin Scan       │ │
-│  │             │  │              │  │ - Order Processing      │ │
-│  │             │  │              │  │ - Risk Checks           │ │
-│  └─────────────┘  └─────────────┘  └─────────────────────────┘ │
-└─────────────────────────────┬───────────────────────────────────┘
-                              │
-┌─────────────────────────────┴───────────────────────────────────┐
-│                    Database (SQLite3 - WAL Mode)                 │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐ │
-│  │ Orders   │ │ Fills    │ │ Klines   │ │ Account  │ │ Risk   │ │
-│  │          │ │          │ │          │ │ Snapshots│ │ Events │ │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └────────┘ │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-┌─────────────────────────────┴───────────────────────────────────┐
-│                    Market Data (OKX Public API)                  │
-│  GET /api/v5/market/ticker    GET /api/v5/market/candles        │
-└─────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 技术栈
-
-| 层级 | 技术 |
-|------|------|
-| 前端框架 | React 18 + TypeScript |
-| 构建工具 | Vite |
-| 样式方案 | Tailwind CSS |
-| 后端框架 | Express 5.x |
-| WebSocket | ws 8.x |
-| 数据库 | SQLite3 (WAL 模式) |
-| 行情来源 | OKX 公共 API |
-
----
-
-## 页面导航
-
-| 路径 | 页面 | 说明 |
-|------|------|------|
-| `/` | Live Dashboard | 实时行情监控 + 扫描结果 |
-| `/orders` | Orders & Activity | 订单管理 + 历史成交 |
-| `/strategy` | Strategy Lab | AI 指标融合策略创建 |
-| `/backtest` | Backtest Engine | 策略历史回测 |
-| `/runner` | Bot Deployment | 量化 Bot 部署控制 |
-| `/history` | Session History | 历史运行记录回顾 |
-
----
-
-## 核心模块
-
-### 策略扫描 (Multi-Factor Scoring)
-
-| 因子 | 权重 | 说明 |
-|------|------|------|
-| Trend | 25% | 12 周期收益率 |
-| MA Spread | 20% | 短期 MA vs 长期 MA |
-| RSI | 15% | RSI 相对 58 中点位置 |
-| Breakout | 15% | 距 20 周期高点距离 |
-| Pullback | 10% | 从高点回撤 + MA 确认 |
-| Activity | 10% | 短期 vs 长期成交量比 |
-| Risk Penalty | - | ATR 高、RSI 超买、MA 弱等扣分 |
-
-### 风险控制
-
-| 规则 | 说明 |
-|------|------|
-| 资金检查 | 预估成本 ≤ 现金 |
-| 单币暴露 | 单币持仓 ≤ `maxSymbolExposurePct` |
-| 总暴露 | 总持仓 ≤ `maxGrossExposurePct` |
-| 冷却时间 | 开仓后 N 秒内不能新开 |
-| 连续亏损 | 连续亏损 N 次后禁止买入 |
-| 每日亏损 | 日亏损超过阈值触发保护 |
-| 最大回撤 | 权益从峰值跌破阈值触发 |
-
----
-
-## 启动方式
+# TradeLab · 加密货币模拟交易实验台
+
+TradeLab 是一个本地运行的 Web 项目：查看行情、组合技术指标、用历史 K 线回测，再通过模拟订单观察账户变化。它的目的，是让策略想法有一个可以配置、运行和复盘的实验环境。
+
+**当前状态：开发中的实验原型。** 行情可来自 OKX 公共接口，交易成交由本地模拟；当前没有向交易所提交真实订单的执行接口。AI 可以提供策略配置建议，效果需要回测与进一步验证。
+
+## 能做什么
+
+| 功能 | 通俗解释 | 当前边界 |
+|---|---|---|
+| 行情与扫描 | 看价格、K 线、观察列表和扫描结果 | 可用真实或 mock 数据；上游失败时可能回退缓存或模拟数据 |
+| 策略实验室 | 选择指标、分配权重，保存组合方案 | AI 建议需要配置 MiniMax；手动配置不依赖 AI |
+| 历史回测 | 把策略放到历史 K 线上，看交易与权益变化 | 输出单币与组合分析，不代表未来收益 |
+| 模拟订单 | 创建买卖订单，观察成交、持仓和现金 | 支持 market / limit 和风险检查；不是实盘交易 |
+| 运行会话 | 开始、停止一次实验，再查看历史 | 当前一次只允许一个 active run；不能据此宣称已实现自动交易 Bot |
+
+下方图片是**根据当前代码绘制的功能/架构说明图**，不是应用截图、实时行情或收益报告。README 使用 PNG 显示；每张图都保留 SVG 源文件，便于修改。
+
+## 1. 构建策略：手动配置或 AI 建议
+
+先选择指标和权重，也可以让 AI 根据描述或已选指标提出组合建议；检查配置后保存，再去回测。
+
+![手动构建或 AI 建议生成策略，再进行回测](docs/assets/strategy-fusion.png)
+
+[查看 SVG 源图](docs/assets/strategy-fusion.svg)
+
+指标目录包括趋势、动量、波动率、成交量等类别。AI 输出配置建议和说明，不是“已经验证的高性能策略”。回测端会把指标的标签/类别映射为核心因子权重，具体机制见 [策略融合说明](docs/strategy-fusion-core-2026-04-04.md)。
+
+## 2. 回测：看实际运行结果
+
+选择策略、币种、时间框架与回看区间，查看收益、回撤、交易次数、暴露和组合权益等结果。回测支持 aggressive / neutral / conservative 决策强度。
+
+![策略设置和历史 K 线进入回测，输出单币与组合结果](docs/assets/backtest-flow.png)
+
+[查看 SVG 源图](docs/assets/backtest-flow.svg)
+
+收益率、胜率和回撤应以你实际运行的回测结果为准。回测自动阈值的实现也不表示运行会话已经复用同一套自动执行逻辑。
+
+## 3. 行情：区分真实来源与演示来源
+
+MARKET_DATA_PROVIDER=real 使用 OKX 公共行情；mock 使用本地模拟数据。真实源请求失败时，相关接口可能先用缓存，再回退 mock，因此不能仅凭“页面有价格”认定它是当前真实行情。
+
+![真实或模拟行情经后端 API 与 WebSocket 进入 Dashboard](docs/assets/market-data.png)
+
+[查看 SVG 源图](docs/assets/market-data.svg)
+
+## 4. 模拟订单：检查账户如何变化
+
+创建订单后，后端执行风险检查和模拟成交，并更新订单、成交、持仓与现金。可查看 new、open、partial、filled、cancelled、rejected 等状态。
+
+![模拟订单经过风险检查、成交模拟，再更新账户与历史](docs/assets/paper-orders.png)
+
+[查看 SVG 源图](docs/assets/paper-orders.svg)
+
+## 5. 运行会话：开始、停止、复盘
+
+选择保存的策略和初始模拟资金，开始一次 run；停止后查看相关记录。当前后端实现会话生命周期与状态管理，尚未实现“启动后自动按策略持续下单”的完整执行循环。
+
+![策略与资金配置进入运行会话，停止后查看历史](docs/assets/run-session.png)
+
+[查看 SVG 源图](docs/assets/run-session.svg)
+
+## 先启动一个本地演示
+
+### 准备
+
+使用满足 Vite 8 要求的 Node.js；例如 Node 22.12+ 或受支持的更高版本，要求见 [Vite 官方说明](https://vite.dev/guide/)。安装 Git 和 npm。
 
 ```bash
-# 安装依赖
-npm install
+git clone https://github.com/clayzhao123/tradelab.git
+cd tradelab
+npm ci
+```
 
-# 启动后端 (端口 3001)
-npm start
+如果是在已有目录中操作，进入仓库根目录后执行 npm ci 即可。根目录用 npm workspaces 同时管理 frontend/ 与 backend/，不要把 frontend_module/ 当成当前应用。
 
-# 或开发模式 (热重载)
+### 复制配置
+
+macOS / Linux：
+
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+Windows PowerShell：
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+Copy-Item frontend/.env.example frontend/.env
+```
+
+首次演示建议把 backend/.env 中以下两行设为：
+
+```dotenv
+DATABASE_URL=
+MARKET_DATA_PROVIDER=mock
+```
+
+这样可先使用本地模拟行情与文件回退存储，不需要先配置数据库或外部 AI。需要真实行情时改为 real。frontend/.env 的 API/WS 地址可以留空，开发服务器会代理到本机 3001 端口。
+
+### 启动
+
+在仓库根目录运行：
+
+```bash
 npm run dev
 ```
 
----
+这条命令同时启动前后端。浏览器打开终端显示的前端地址，默认是 [http://localhost:5173](http://localhost:5173)；后端健康检查为 [http://localhost:3001/health](http://localhost:3001/health)。
 
-## 环境变量
+没有根目录 npm start 脚本。需要单独启动时，使用：
 
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| `PORT` | 3001 | 服务端口 |
-| `TICK_MS` | 60000 | 调度器间隔 (ms) |
-| `OKX_TIMEOUT_MS` | 4000 | OKX API 超时 |
-| `PAPER_FILL_MIN_RATIO` | 0.25 | 模拟成交最小比例 |
-| `PAPER_FILL_MAX_RATIO` | 0.7 | 模拟成交最大比例 |
-| `DB_PATH` | data/tradelab.db | 数据库路径 |
+```bash
+npm run dev --workspace backend
+npm run dev --workspace frontend
+```
 
----
+两个命令分别在两个终端执行。后端使用默认端口 3001；若更改它，需要同时修改 frontend/vite.config.ts 的代理目标。
 
-## API 端点
+## 第一次使用顺序
 
-### 行情
-- `GET /api/market/quotes` - 当前价格
-- `GET /api/klines/:symbol` - K 线数据
+1. 在 Dashboard 查看行情，并确认是 mock 演示还是 real 来源。
+2. 在 Strategy Lab 手动创建一个组合；需要 AI 时在页面配置 MiniMax provider、model 和 API key。
+3. 在 Backtest 选择策略与数据区间，查看结果，不把插图当作实测。
+4. 在 Orders 创建模拟订单，观察订单、成交和账户变化。
+5. 在 Runner 创建/停止会话，在 History 复盘。
 
-### 订单
-- `GET /api/orders` - 订单列表
-- `POST /api/orders` - 创建订单
-- `DELETE /api/orders/:id` - 取消订单
+AI 设置的后端路径是 /api/v1/ai/config，生成建议的路径是 /api/v1/ai/fusion/generate。接口 base URL 可通过 MINIMAX_OPENAI_BASE_URL 调整，具体来源示例见 [backend/.env.example](backend/.env.example)。
 
-### 调度器
-- `POST /api/scheduler/start` - 启动调度器
-- `POST /api/scheduler/stop` - 停止调度器
-- `POST /api/scheduler/trigger` - 手动触发一次调度
+## 页面导航
 
----
+| 路径 | 页面 | 作用 |
+|---|---|---|
+| / | Dashboard | 行情、K 线、观察列表与扫描 |
+| /strategy | Strategy Lab | 指标选择、权重与 AI 建议 |
+| /backtest | Backtest | 历史回测与结果分析 |
+| /orders | Orders | 模拟订单与成交 |
+| /runner | Bot Runner | 当前实现为实验会话管理 |
+| /history | History | 查看运行记录 |
 
-## WebSocket 事件
+## 当前系统结构
 
-| 事件 | 说明 |
-|------|------|
-| `price_update` | 价格变化推送 |
-| `scan_update` | 扫描完成推送 |
-| `order_update` | 订单创建/更新 |
-| `fill_update` | 成交记录 |
-| `risk_event` | 风险规则触发 |
+![React 前端连接 Fastify 后端，后端分别使用行情源、运行内存与持久化仓库](docs/assets/architecture.png)
 
----
+[查看 SVG 源图](docs/assets/architecture.svg)
 
-## 开发进度
+| 位置 | 当前用途 |
+|---|---|
+| frontend/ | 正在使用的 React 前端 |
+| backend/ | Fastify API、行情、回测、订单和会话服务 |
+| database/ | PostgreSQL schema、迁移与 seed |
+| docs/ | 设计、领域说明与运行手册 |
+| docs/assets/ | 本 README 的 PNG 图片和 SVG 源文件 |
+| scripts/v1-smoke.mjs | HTTP 与 WebSocket 基本流程检查 |
+| frontend_module/ | 原始设计参考代码，不属于根目录 npm workspaces |
+| memory/、skill/ | 开发交接记录与协作说明，不是运行服务 |
 
-| Group | 任务 | 状态 |
-|-------|------|------|
-| G1 | 基础架构 | ✅ 完成 |
-| G2 | 交易持久化 | ✅ 完成 |
-| G3 | 行情与 K 线 | ✅ 完成 |
-| G4 | 调度任务 | ✅ 完成 |
-| G5 | API 与 WebSocket | ✅ 完成 |
-| G6 | 前端改造 | ✅ 完成 |
-| G7 | 稳定化 | ✅ 完成 |
-| G8 | UI 优化 | ✅ 完成 |
+实际技术栈来自当前 package.json：React 19、TypeScript 5.9、Vite 8、Tailwind CSS 4；后端是 Fastify 5。WebSocket 由后端网关实现。
+
+## 哪些数据会保留
+
+存储有两层，不能把“有 database/ 目录”理解成所有业务都已持久化：
+
+| 数据 | 当前存储 |
+|---|---|
+| 策略、AI provider 设置、回测历史 | 开发模式默认回退到 backend/.data/ JSON 文件；可选 PostgreSQL repository |
+| 模拟订单、成交、账户、运行会话及相关运行历史 | 当前 MemoryDb，后端重启后不应期待保留 |
+| 测试中的 repository 回退 | 内存，与开发模式文件回退不同 |
+
+PostgreSQL 接口已写在代码中，但 backend/package.json 尚未声明 pg 依赖；只填写 DATABASE_URL 不足以保证启用。要使用它，需要安装 pg、建立数据库并执行迁移，随后确认后端连接日志。AI 设置文件可能包含密钥，.env 和 .data/ 不应提交或分享。
+
+## 配置项
+
+| 配置 | 默认值/用途 |
+|---|---|
+| HOST / PORT | 0.0.0.0 / 3001，后端监听地址 |
+| MARKET_DATA_PROVIDER | real；首次演示可设 mock |
+| DATABASE_URL | env.ts 默认空；.env.example 有示例连接串 |
+| WS_PATH | /ws |
+| WS_HEARTBEAT_INTERVAL_MS | 15000 |
+| MINIMAX_OPENAI_BASE_URL | API base，默认值与国内/国际配置见 .env.example |
+| VITE_API_BASE_URL / VITE_WS_BASE_URL | 开发时留空可使用 Vite 代理 |
+
+## 常用接口与事件
+
+当前业务 API 前缀是 /api/v1。
+
+| 方法 | 路径 | 用途 |
+|---|---|---|
+| GET | /health | 健康检查 |
+| GET | /api/v1/system/status | 系统状态 |
+| GET | /api/v1/market/watchlist | 观察列表 |
+| GET | /api/v1/quotes | 行情 |
+| GET | /api/v1/klines | K 线，参数见路由 schema |
+| GET / POST | /api/v1/strategies | 列出/创建策略 |
+| GET / POST | /api/v1/orders | 列出/创建模拟订单 |
+| DELETE | /api/v1/orders/:id | 取消订单 |
+| GET | /api/v1/fills | 成交 |
+| POST | /api/v1/backtest/run | 回测 |
+| GET | /api/v1/backtest/history | 回测记录 |
+| GET / POST | /api/v1/runs | 列出/开始会话 |
+| POST | /api/v1/runs/:id/stop | 停止会话 |
+
+WebSocket 默认为 ws://localhost:3001/ws。先接收 snapshot，再应用 dashboard.updated、order.updated、fill.created、run.updated、account.updated、risk.triggered 等事件。消息结构与重连约定见 [WebSocket 合约](docs/websocket-contract.md)，完整参数以 backend/src/modules/ 下的 *.routes.ts 为准。
+
+## 修改与检查
+
+在仓库根目录运行：
+
+```bash
+npm test
+npm run build
+npm run lint --workspace frontend
+```
+
+后端已启动时，可另开终端运行：
+
+```bash
+npm run smoke:v1
+```
+
+修改功能时，先运行测试与构建，再用 smoke 检查服务之间的基本流程。将实际结果记录在对应 PR，方便下次继续开发。
+
+更多说明：[本地运行手册](docs/runbook.md) · [前端说明](frontend/README.md) · [页面职责](docs/page-semantics.md) · [图示维护方式](docs/assets/README.md)。

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="354" viewBox="0 0 960 354" role="img" aria-labelledby="title description">
+  <title id="title">Manage a paper-trading session</title>
+  <desc id="description">Session lifecycle diagram. No leverage, unattended bot execution or live deployment is implied.</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#69b7ff"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#56d4ae"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#bb9cff"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 Z" fill="#f4bf68"/>
+    </marker>
+  </defs>
+  <rect width="960" height="354" rx="16" fill="#0b1220"/>
+  <g font-family="DejaVu Sans, Arial, sans-serif">
+    <text x="30" y="43" fill="#e8eff7" font-size="24" text-anchor="start" font-weight="600">Manage a paper-trading session</text>
+    <text x="30" y="72" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Session lifecycle diagram. No leverage, unattended bot execution or live deployment is implied.</text>
+    <rect x="30" y="118" width="242" height="121" rx="12" fill="#131f32" stroke="#334a65"/>
+    <rect x="30" y="134" width="4" height="89" rx="2" fill="#69b7ff"/>
+    <text x="48" y="149" fill="#69b7ff" font-size="18" text-anchor="start" font-weight="600">Start configuration</text>
+    <text x="48" y="176" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Choose a saved strategy</text>
+    <text x="48" y="199" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Set initial simulated cash</text>
+    <text x="48" y="222" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Create a run</text>
+    <rect x="354" y="118" width="250" height="121" rx="12" fill="#131f32" stroke="#334a65"/>
+    <rect x="354" y="134" width="4" height="89" rx="2" fill="#56d4ae"/>
+    <text x="372" y="149" fill="#56d4ae" font-size="18" text-anchor="start" font-weight="600">Active run</text>
+    <text x="372" y="176" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">One active run at a time</text>
+    <text x="372" y="199" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Track session/account state</text>
+    <text x="372" y="222" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Reject a second active run</text>
+    <rect x="686" y="118" width="244" height="121" rx="12" fill="#131f32" stroke="#334a65"/>
+    <rect x="686" y="134" width="4" height="89" rx="2" fill="#bb9cff"/>
+    <text x="704" y="149" fill="#bb9cff" font-size="18" text-anchor="start" font-weight="600">Stopped run</text>
+    <text x="704" y="176" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Stop the active session</text>
+    <text x="704" y="199" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Review fills and events</text>
+    <text x="704" y="222" fill="#a8bbcf" font-size="14" text-anchor="start" font-weight="400">Inspect session history</text>
+    <path d="M272 178 H354" fill="none" stroke="#69b7ff" stroke-width="2" marker-end="url(#arrow-blue)"/>
+    <text x="291" y="165" fill="#69b7ff" font-size="13" text-anchor="start" font-weight="400">start</text>
+    <path d="M604 178 H686" fill="none" stroke="#bb9cff" stroke-width="2" marker-end="url(#arrow-purple)"/>
+    <text x="626" y="165" fill="#bb9cff" font-size="13" text-anchor="start" font-weight="400">stop</text>
+    <text x="30" y="294" fill="#a8bbcf" font-size="15" text-anchor="start" font-weight="400">Run management is implemented. A run does not establish an automatic trading execution loop.</text>
+    <text x="30" y="321" fill="#a8bbcf" font-size="15" text-anchor="start" font-weight="400">Current run/account/order state is in memory; it is not a deployed exchange bot.</text>
+  </g>
+</svg>
