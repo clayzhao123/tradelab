@@ -1,30 +1,39 @@
-# README 插图与维护
+# 方法图与维护
 
-主 README 使用三张由内置 imagegen 工具生成的概念插图，取代旧的六组方框式 SVG/PNG。插图解释用途与实验思路，不是应用截图、精确技术图或收益报告；技术关系保留为主 README 中可编辑的 Mermaid 文本。
+主 README 的三张图直接描述当前代码的工作逻辑：输入、处理顺序、条件分支、计算公式、输出及尚未实现的部分。图中不使用虚构行情、收益数字或应用截图。
 
-| 资源 | 用途 | 图中可核对的文字 |
-|---|---|---|
-| [tradelab-cover.webp](tradelab-cover.webp) | 项目封面 | TradeLab / A place to test trading ideas / PAPER TRADING LAB |
-| [experiment-journey.webp](experiment-journey.webp) | 三个实验阶段 | 构建策略 / 历史回测 / 模拟交易 |
-| [strategy-building.webp](strategy-building.webp) | 手动与 AI 两条构建路径 | 手动组合 / AI 辅助 / AI 提供建议，由你检查和保存 |
+| 图 | README 展示资源 | 矢量资源 | 内容 |
+|---|---|---|---|
+| 1 | [method-strategy.png](method-strategy.png) | [method-strategy.svg](method-strategy.svg) | 手动／AI 配置、人工检查、保存、六因子映射 |
+| 2 | [method-backtest.png](method-backtest.png) | [method-backtest.svg](method-backtest.svg) | K 线、加权信号、全样本阈值、持仓、成本与权益 |
+| 3 | [method-orders.png](method-orders.png) | [method-orders.svg](method-orders.svg) | 风控失败、市价成交、限价挂单与账户更新 |
 
-## 设计与导出
+## 重绘
 
-统一方向为暖白背景、深蓝主体、少量青绿与珊瑚色，使用有触感的桌面实验工具表达抽象概念。原始生成尺寸为 1672 × 941，展示资源仅转为 WebP 并压缩，保留画面内容和尺寸。
+可编辑源文件是 [scripts/render-method-figures.py](../../scripts/render-method-figures.py)，使用 Matplotlib 绘图，Pillow 压缩 PNG。它只生成文档资源，不读取行情或运行交易业务，不是应用启动依赖。
 
-生成方式：内置 imagegen；不在文档中声明工具未暴露的具体模型版本。完整提示词见 [image-prompts.md](image-prompts.md)，便于后续重新生成和迭代。
+在仓库根目录执行：
 
-## 更新一张插图
-
-1. 先修改提示词，明确主题、必须正确的文字和能力边界。
-2. 生成后检查文字、构图和技术含义；不要加入虚构回测结果、盈利承诺或尚未实现的自动执行能力。
-3. 将选中的图片保存为同名 WebP，检查在浏览器中的清晰度；不需要修改应用代码。
-4. 同步更新主 README 的图片描述以及本页资源表。真正的应用截图应另行标注版本与数据来源。
-
-从根目录 README 引用时：
-
-```markdown
-![三阶段实验概念](docs/assets/experiment-journey.webp)
+```bash
+python -m pip install matplotlib
+python scripts/render-method-figures.py --font /path/to/NotoSansSC.ttf
 ```
 
-本目录不再维护旧 SVG。结构图需要修改时，直接编辑主 README 的 Mermaid 块；这样代码关系与审阅文字仍可精确维护。
+需要支持中文的字体文件，如 Noto Sans SC、Noto Sans CJK SC 或思源黑体；字体未随仓库分发。也可以用 `TRADELAB_FIGURE_FONT` 指定本机字体路径。已安装的上述字体会被自动查找。
+
+脚本生成三组同名 PNG/SVG。PNG 为 160 dpi、宽 2080 像素；SVG 将字形嵌入为路径，读者无需安装绘图字体即可显示。修改文字和布局应编辑 Python 源文件后重绘，而不是直接编辑 SVG 字形路径。SVG 带有 title/desc 和可访问性标签。
+
+## 更新规则
+
+1. 先核对业务代码与 [计算方法](../methodology.md)，确定输入、公式、分支和限制。
+2. 更新脚本中的图，再运行重绘。脚本会检查框内文字是否越界。
+3. 打开 PNG，人工检查箭头、公式、中文和图注；解析 SVG 确认没有外部图片引用。
+4. 同步提交脚本、PNG、SVG、方法说明及 README。算法有变化时，图与文字必须一起更新。
+
+从根目录 README 引用 PNG，可减少不同查看器的 SVG 渲染差异，同时保留 SVG 供放大或导出：
+
+```markdown
+![历史回测的信号与收益计算](docs/assets/method-backtest.png)
+```
+
+旧概念插图和提示词可在 Git 历史中查看；现行文档使用这三组方法图。

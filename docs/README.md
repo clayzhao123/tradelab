@@ -6,6 +6,7 @@
 
 | 想了解什么 | 读哪份文档 |
 |---|---|
+| 策略如何形成、回测公式、订单分支及方法边界 | [当前计算方法](methodology.md) |
 | 启动、环境配置、数据保存与排错 | [本地运行手册](runbook.md) |
 | 启动命令、API 路径、WebSocket 和代码入口 | [开发与接口参考](developer-reference.md) |
 | 当前结构问题、优先级、能否代为实现 | [结构与维护审查](project-review.md) |
@@ -13,7 +14,7 @@
 | 各页面的职责 | [页面语义](page-semantics.md) |
 | 领域术语 | [领域词典](domain-glossary.md) |
 | WebSocket 消息约定 | [WebSocket 合约](websocket-contract.md) |
-| 本轮插图与生成提示词 | [图片维护](assets/README.md) |
+| 三张方法图的资源与重绘脚本 | [方法图维护](assets/README.md) |
 
 ## 设计背景与历史记录
 
@@ -30,4 +31,4 @@
 | 原始界面设计代码 | [frontend_module 历史设计](../frontend_module/README.md) |
 | 开发交接与协作约定 | [memory/](../memory/) · [skill/](../skill/README.md) |
 
-文档维护方式：主 README 讲用途和使用；runbook 讲配置与排错；developer-reference 讲代码与接口；project-review 记录待办。新增设计计划应带日期，避免再次形成多个“当前说明”。
+文档维护方式：主 README 讲用途、方法概览和使用；methodology 定义当前算法；runbook 讲配置与排错；developer-reference 讲代码与接口；project-review 记录待办。新增设计计划应带日期，避免再次形成多个“当前说明”。
